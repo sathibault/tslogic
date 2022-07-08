@@ -4569,6 +4569,7 @@ export interface ResolvedProjectReference {
 /** @internal */
 export const enum StructureIsReused {
     Not,
+    SafeModuleCache,
     SafeModules,
     Completely,
 }
@@ -6965,6 +6966,22 @@ export interface CreateProgramOptions {
     oldProgram?: Program;
     configFileParsingDiagnostics?: readonly Diagnostic[];
 }
+
+/** @internal */
+export interface OldBuildInfoProgram {
+    getCompilerOptions(): CompilerOptions;
+}
+
+/** @internal */
+export interface OldBuildInfoProgramHost {
+    fileExists(fileName: string): boolean;
+}
+
+/** @internal */
+export type OldBuildInfoProgramConstructor = (host: OldBuildInfoProgramHost) => OldBuildInfoProgram | undefined;
+
+/** @internal */
+export type CreateProgramOptionsWithOldBuildInfoProgramConstructor = Omit<CreateProgramOptions, "oldProgram"> & { oldProgram?: Program | OldBuildInfoProgramConstructor; };
 
 /** @internal */
 export interface CommandLineOptionBase {

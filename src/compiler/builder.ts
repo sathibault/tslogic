@@ -65,6 +65,9 @@ import {
     MoreAwareCacheEntry,
     noop,
     notImplemented,
+    OldBuildInfoProgram,
+    OldBuildInfoProgramConstructor,
+    OldBuildInfoProgramHost,
     outFile,
     Path,
     Program,
@@ -1424,7 +1427,7 @@ export function getBuilderCreationParameters(newProgramOrRootNames: Program | re
             rootNames: newProgramOrRootNames,
             options: hostOrOptions as CompilerOptions,
             host: oldProgramOrHost as CompilerHost,
-            oldProgram: oldProgram && oldProgram.getProgramOrUndefined(),
+            oldProgram: oldProgram?.getProgramOrOldBuildInfoProgramUndefined(),
             configFileParsingDiagnostics,
             projectReferences
         });
@@ -1519,6 +1522,7 @@ export function createBuilderProgram(kind: BuilderProgramKind, { newProgram, hos
     builderProgram.getSemanticDiagnostics = getSemanticDiagnostics;
     builderProgram.emit = emit;
     builderProgram.releaseProgram = () => releaseCache(state);
+    builderProgram.getProgramOrOldBuildInfoProgramUndefined = createGetProgramOrOldBuildInfoProgramUndefined(state);
 
     if (kind === BuilderProgramKind.SemanticDiagnosticsBuilderProgram) {
         (builderProgram as SemanticDiagnosticsBuilderProgram).getSemanticDiagnosticsOfNextAffectedFile = getSemanticDiagnosticsOfNextAffectedFile;
@@ -1939,6 +1943,7 @@ export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, 
         restoreEmitState: noop,
         getProgram: notImplemented,
         getProgramOrUndefined: returnUndefined,
+        getProgramOrOldBuildInfoProgramUndefined: createGetProgramOrOldBuildInfoProgramUndefined(state),
         releaseProgram: noop,
         getCompilerOptions: () => state.compilerOptions,
         getSourceFile: notImplemented,
@@ -1984,6 +1989,33 @@ export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, 
     }
 }
 
+function createGetProgramOrOldBuildInfoProgramUndefined(state: ReusableBuilderProgramState): () => Program | OldBuildInfoProgramConstructor | undefined {
+    return () => state.program ??
+            (state.cacheResolutions || state.resuableCacheResolutions ?
+                (host => createOldBuildInfoProgram(
+                    host,
+                    state.compilerOptions,
+                    state.cacheResolutions,
+                    // Prefer cached resolutions over serialized format
+                    !state.cacheResolutions ? state.resuableCacheResolutions : undefined,
+                )) :
+                undefined
+            );
+}
+
+/** @internal */
+export function createOldBuildInfoProgram(
+    _host: OldBuildInfoProgramHost,
+    compilerOptions: CompilerOptions,
+    cacheResolutions: ReusableBuilderProgramState["cacheResolutions"],
+    resuableCacheResolutions: ReusableBuilderProgramState["resuableCacheResolutions"],
+): OldBuildInfoProgram | undefined {
+    if (!cacheResolutions && !resuableCacheResolutions) return undefined;
+    return {
+        getCompilerOptions: () => compilerOptions,
+    };
+}
+
 /** @internal */
 export function getBuildInfoFileVersionMap(
     program: ProgramBuildInfo,
@@ -2009,6 +2041,7 @@ export function createRedirectedBuilderProgram(getState: () => { program?: Progr
         restoreEmitState: noop,
         getProgram,
         getProgramOrUndefined: () => getState().program,
+        getProgramOrOldBuildInfoProgramUndefined: () => getState().program,
         releaseProgram: () => getState().program = undefined,
         getCompilerOptions: () => getState().compilerOptions,
         getSourceFile: fileName => getProgram().getSourceFile(fileName),
