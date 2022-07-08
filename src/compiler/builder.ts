@@ -170,6 +170,11 @@ export interface ReusableBuilderProgramState extends BuilderState {
         modules: Map<Path, ModeAwareCache<ResolvedModuleWithFailedLookupLocations>> | undefined;
         typeRefs: Map<Path, ModeAwareCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations>> | undefined;
     };
+    resuableCacheResolutions?: {
+        resolutions: ProgramBuildInfoCacheResolutions;
+        fileNames: readonly string[];
+        buildInfoPath: string;
+    }
 }
 
 /** @internal */
@@ -497,6 +502,8 @@ function convertToDiagnosticRelatedInformation(diagnostic: ReusableDiagnosticRel
  */
 function releaseCache(state: BuilderProgramState) {
     BuilderState.releaseCache(state);
+    // Store the resolutions if possible
+    if (!state.resuableCacheResolutions) getCacheResolutions(state);
     state.program = undefined;
 }
 
@@ -1014,10 +1021,11 @@ export function isProgramBundleEmitBuildInfo(info: ProgramBuildInfo): info is Pr
 /**
  * Gets the program information to be emitted in buildInfo so that we can use it to create new program
  */
-function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | undefined): BuildInfo {
+function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | undefined, buildInfoPath: string,): BuildInfo {
     const currentDirectory = Debug.checkDefined(state.program).getCurrentDirectory();
     const getCanonicalFileName = createGetCanonicalFileName(state.program!.useCaseSensitiveFileNames());
-    const buildInfoDirectory = getDirectoryPath(getNormalizedAbsolutePath(getTsBuildInfoEmitOutputFilePath(state.compilerOptions)!, currentDirectory));
+    buildInfoPath = getNormalizedAbsolutePath(buildInfoPath, currentDirectory);
+    const buildInfoDirectory = getDirectoryPath(buildInfoPath);
     // Convert the file name to Path here if we set the fileName instead to optimize multiple d.ts file emits and having to compute Canonical path
     const latestChangedDtsFile = state.latestChangedDtsFile ? relativeToBuildInfoEnsuringAbsolutePath(state.latestChangedDtsFile) : undefined;
     const fileNames: string[] = [];
@@ -1267,19 +1275,24 @@ function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | unde
     }
 
     function toProgramBuildInfoResolutions(): ProgramBuildInfoCacheResolutions | undefined {
-        const cacheResolutions = getCacheResolutions(state, getCanonicalFileName);
+        const cacheResolutions = getCacheResolutions(state);
         const modules = toProgramBuildInfoResolutionCache(cacheResolutions?.modules);
         const typeRefs = toProgramBuildInfoResolutionCache(cacheResolutions?.typeRefs);
         if (!resolutions) return;
         Debug.assertIsDefined(names);
         Debug.assertIsDefined(resolutionEntries);
-        return {
-            resolutions,
-            names,
-            resolutionEntries,
-            modules,
-            typeRefs,
+        state.resuableCacheResolutions = {
+            resolutions: {
+                resolutions,
+                names,
+                resolutionEntries,
+                modules,
+                typeRefs,
+            },
+            fileNames,
+            buildInfoPath,
         };
+        return state.resuableCacheResolutions.resolutions;
     }
 
     function toProgramBuildInfoResolutionCache<T extends ResolvedModuleWithFailedLookupLocations | ResolvedTypeReferenceDirectiveWithFailedLookupLocations>(cache: Map<Path, ModeAwareCache<T>> | undefined): ProgramBuildInfoResolutionCache | undefined {
@@ -1343,7 +1356,7 @@ function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | unde
     }
 }
 
-function getCacheResolutions(state: BuilderProgramState, getCanonicalFileName: GetCanonicalFileName) {
+function getCacheResolutions(state: BuilderProgramState) {
     if (state.cacheResolutions || !state.compilerOptions.cacheResolutions) return state.cacheResolutions;
     let modules: Map<Path, ModeAwareCache<ResolvedModuleWithFailedLookupLocations>> | undefined;
     let typeRefs: Map<Path, ModeAwareCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations>> | undefined;
@@ -1356,7 +1369,7 @@ function getCacheResolutions(state: BuilderProgramState, getCanonicalFileName: G
     if (automaticTypeDirectiveNames.length) {
         const currentDirectory = state.program!.getCurrentDirectory();
         const containingDirectory = state.compilerOptions.configFilePath ? getDirectoryPath(state.compilerOptions.configFilePath) : currentDirectory;
-        const containingPath = toPath(containingDirectory, currentDirectory, getCanonicalFileName);
+        const containingPath = toPath(containingDirectory, currentDirectory, createGetCanonicalFileName(state.program!.useCaseSensitiveFileNames()));
         typeRefs = toPerDirectoryCache(typeRefs, containingPath, state.program!.getAutomaticTypeDirectiveResolutions());
     }
     return state.cacheResolutions = { modules, typeRefs };
@@ -1489,7 +1502,7 @@ export function createBuilderProgram(kind: BuilderProgramKind, { newProgram, hos
     }
 
     const state = createBuilderProgramState(newProgram, oldState, host.disableUseFileVersionAsSignature);
-    newProgram.getBuildInfo = bundle => getBuildInfo(state, bundle);
+    newProgram.getBuildInfo = (bundle, buildInfoPath) => getBuildInfo(state, bundle, buildInfoPath);
 
     // To ensure that we arent storing any references to old program or new program without state
     newProgram = undefined!; // TODO: GH#18217
@@ -1833,14 +1846,38 @@ export function toProgramEmitPending(value: ProgramBuildInfoBundlePendingEmit, o
     return !value ? getBuilderFileEmit(options || {}) : value;
 }
 
-/** @internal */
-export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, buildInfoPath: string, host: ReadBuildProgramHost): EmitAndSemanticDiagnosticsBuilderProgram {
-    const program = buildInfo.program!;
+function getProgramBuildInfoFilePathDecoder(fileNames: readonly string[], buildInfoPath: string, host: ReadBuildProgramHost) {
     const buildInfoDirectory = getDirectoryPath(getNormalizedAbsolutePath(buildInfoPath, host.getCurrentDirectory()));
     const getCanonicalFileName = createGetCanonicalFileName(host.useCaseSensitiveFileNames());
 
+    let filePaths: Path[] | undefined;
+    let fileAbsolutePaths: string[] | undefined;
+    return { toAbsolutePath, toFilePath, toFileAbsolutePath };
+
+    function toPath(path: string) {
+        return ts.toPath(path, buildInfoDirectory, getCanonicalFileName);
+    }
+
+    function toAbsolutePath(path: string) {
+        return getNormalizedAbsolutePath(path, buildInfoDirectory);
+    }
+
+    function toFilePath(fileId: ProgramBuildInfoFileId): Path {
+        return filePaths?.[fileId - 1] ??
+            ((filePaths ??= new Array(fileNames.length))[fileId - 1] = toPath(fileNames[fileId - 1]));
+    }
+
+    function toFileAbsolutePath(fileId: ProgramBuildInfoAbsoluteFileId): string {
+        return fileAbsolutePaths?.[fileId - 1] ??
+            ((fileAbsolutePaths ??= new Array(fileNames.length))[fileId - 1] = toAbsolutePath(fileNames[fileId - 1]));
+    }
+}
+
+/** @internal */
+export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, buildInfoPath: string, host: ReadBuildProgramHost): EmitAndSemanticDiagnosticsBuilderProgram {
+    const program = buildInfo.program!;
+    const { toFilePath, toAbsolutePath } = getProgramBuildInfoFilePathDecoder(program.fileNames, buildInfoPath, host);
     let state: ReusableBuilderProgramState;
-    const filePaths = program.fileNames?.map(toPath);
     let filePathsSetList: Set<Path>[] | undefined;
     const latestChangedDtsFile = program.latestChangedDtsFile ? toAbsolutePath(program.latestChangedDtsFile) : undefined;
     if (isProgramBundleEmitBuildInfo(program)) {
@@ -1856,6 +1893,7 @@ export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, 
             outSignature: program.outSignature,
             programEmitPending: program.pendingEmit === undefined ? undefined : toProgramEmitPending(program.pendingEmit, program.options),
             bundle: buildInfo.bundle,
+            resuableCacheResolutions: toResuableCacheResolutions(),
         };
     }
     else {
@@ -1891,6 +1929,7 @@ export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, 
             changedFilesSet: new Set(map(program.changeFileSet, toFilePath)),
             latestChangedDtsFile,
             emitSignatures: emitSignatures?.size ? emitSignatures : undefined,
+            resuableCacheResolutions: toResuableCacheResolutions(),
         };
     }
 
@@ -1920,18 +1959,6 @@ export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, 
         hasChangedEmitSignature: returnFalse,
     };
 
-    function toPath(path: string) {
-        return ts.toPath(path, buildInfoDirectory, getCanonicalFileName);
-    }
-
-    function toAbsolutePath(path: string) {
-        return getNormalizedAbsolutePath(path, buildInfoDirectory);
-    }
-
-    function toFilePath(fileId: ProgramBuildInfoFileId) {
-        return filePaths[fileId - 1];
-    }
-
     function toFilePathsSet(fileIdsListId: ProgramBuildInfoFileIdListId) {
         return filePathsSetList![fileIdsListId - 1];
     }
@@ -1946,6 +1973,14 @@ export function createBuilderProgramUsingProgramBuildInfo(buildInfo: BuildInfo, 
             map.set(toFilePath(fileId), toFilePathsSet(fileIdListId))
         );
         return map;
+    }
+
+    function toResuableCacheResolutions(): BuilderProgramState["resuableCacheResolutions"] {
+        return program.cacheResolutions && {
+            resolutions: program.cacheResolutions,
+            fileNames: program.fileNames,
+            buildInfoPath,
+        };
     }
 }
 
