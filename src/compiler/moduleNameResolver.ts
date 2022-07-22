@@ -757,40 +757,58 @@ export function getKeyForCompilerOptions(options: CompilerOptions, affectingOpti
 
 /** @internal */
 export interface CacheWithRedirects<K, V> {
+    getMapOfCacheRedirects(redirectedReference: ResolvedProjectReference | undefined): Map<K, V> | undefined;
     getOrCreateMapOfCacheRedirects(redirectedReference: ResolvedProjectReference | undefined): Map<K, V>;
+    getOrCreateMap(redirectOptions: CompilerOptions, create: true): Map<K, V>;
+    getOrCreateMap(redirectOptions: CompilerOptions, create: false): Map<K, V> | undefined;
     update(newOptions: CompilerOptions): void;
     clear(): void;
+    getOwnMap(): Map<K, V>;
+    redirectsMap: Map<CompilerOptions, Map<K, V>>;
 }
 
 /** @internal */
+export type RedirectsCacheKey = string & { __compilerOptionsKey: any; };
+/** @internal */
 export function createCacheWithRedirects<K, V>(ownOptions: CompilerOptions | undefined): CacheWithRedirects<K, V> {
-    type RedirectsCacheKey = string & { __compilerOptionsKey: any; };
     const redirectsMap = new Map<CompilerOptions, Map<K, V>>();
     const optionsToRedirectsKey = new Map<CompilerOptions, RedirectsCacheKey>();
     const redirectsKeyToMap = new Map<RedirectsCacheKey, Map<K, V>>();
     let ownMap = new Map<K, V>();
     if (ownOptions) redirectsMap.set(ownOptions, ownMap);
     return {
+        getMapOfCacheRedirects,
         getOrCreateMapOfCacheRedirects,
+        getOrCreateMap,
         update,
         clear,
+        getOwnMap: () => ownMap,
+        redirectsMap,
     };
+
+    function getMapOfCacheRedirects(redirectedReference: ResolvedProjectReference | undefined): Map<K, V> | undefined {
+        return redirectedReference ?
+            getOrCreateMap(redirectedReference.commandLine.options, /*create*/ false) :
+            ownMap;
+    }
 
     function getOrCreateMapOfCacheRedirects(redirectedReference: ResolvedProjectReference | undefined): Map<K, V> {
         return redirectedReference ?
-            getOrCreateMap(redirectedReference.commandLine.options) :
+            getOrCreateMap(redirectedReference.commandLine.options, /*create*/ true) :
             ownMap;
     }
 
     function update(newOptions: CompilerOptions) {
         if (ownOptions !== newOptions) {
-            if (ownOptions) ownMap = getOrCreateMap(newOptions); // set new map for new options as ownMap
+            if (ownOptions) ownMap = getOrCreateMap(newOptions, /*create*/ true); // set new map for new options as ownMap
             else redirectsMap.set(newOptions, ownMap); // Use existing map if oldOptions = undefined
             ownOptions = newOptions;
         }
     }
 
-    function getOrCreateMap(redirectOptions: CompilerOptions): Map<K, V> {
+    function getOrCreateMap(redirectOptions: CompilerOptions, create: true): Map<K, V>;
+    function getOrCreateMap(redirectOptions: CompilerOptions, create: false): Map<K, V> | undefined;
+    function getOrCreateMap(redirectOptions: CompilerOptions, create: boolean): Map<K, V> | undefined {
         let result = redirectsMap.get(redirectOptions);
         if (result) return result;
         const key = getRedirectsCacheKey(redirectOptions);
@@ -801,9 +819,10 @@ export function createCacheWithRedirects<K, V>(ownOptions: CompilerOptions | und
                 if (ownKey === key) result = ownMap;
                 else if (!redirectsKeyToMap.has(ownKey)) redirectsKeyToMap.set(ownKey, ownMap);
             }
-            redirectsKeyToMap.set(key, result ??= new Map());
+            if (create) result ??= new Map();
+            if (result) redirectsKeyToMap.set(key, result);
         }
-        redirectsMap.set(redirectOptions, result);
+        if (result) redirectsMap.set(redirectOptions, result);
         return result;
     }
 

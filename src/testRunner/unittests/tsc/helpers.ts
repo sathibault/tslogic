@@ -497,13 +497,20 @@ interface ReadableProgramBuildInfoResolutionCacheEntry {
     dir: string;
     resolutions: readonly ReadableProgramBuildInfoResolutionEntry[];
 }
+type ReadableProgramBuildInfoResolutionRedirectsCache = Omit<ts.ProgramBuildInfoResolutionRedirectsCache, "cache"> & {
+    cache: ReadableProgramBuildInfoResolutionCacheEntry[];
+};
+type ReadableProgramBuildInfoResolutionCacheWithRedirects = ReadableProgramBuildInfoResolutionCacheEntry[] | {
+    own: ReadableProgramBuildInfoResolutionCacheEntry[] | undefined;
+    redirects: readonly ReadableProgramBuildInfoResolutionRedirectsCache[];
+};
 type ReadableProgramBuildInfoCacheResolutions = Omit<ts.ProgramBuildInfoCacheResolutions,
     "resolutions" | "resolutionEntries" | "modules" | "typeRefs"
 > & {
     resolutions: readonly ReadableWithOriginal<ReadableProgramBuildInfoResolution, ts.ProgramBuildInfoResolution>[];
     resolutionEntries: readonly ReadableWithOriginal<ReadableProgramBuildInfoResolutionEntry, ts.ProgramBuildInfoResolutionEntry>[];
-    modules: ReadableProgramBuildInfoResolutionCacheEntry[] | undefined;
-    typeRefs: ReadableProgramBuildInfoResolutionCacheEntry[] | undefined;
+    modules: ReadableProgramBuildInfoResolutionCacheWithRedirects | undefined;
+    typeRefs: ReadableProgramBuildInfoResolutionCacheWithRedirects | undefined;
 };
 
 type ReadableProgramMultiFileEmitBuildInfo = Omit<ts.ProgramMultiFileEmitBuildInfo,
@@ -679,9 +686,20 @@ function generateBuildInfoProgramBaseline(sys: ts.System, buildInfoPath: string,
             ...cacheResolutions,
             resolutions: resolutions.withOriginals,
             resolutionEntries: resolutionEntries.withOriginals,
-            modules: toReadableProgramBuildInfoResolutionCache(cacheResolutions.modules),
-            typeRefs: toReadableProgramBuildInfoResolutionCache(cacheResolutions.typeRefs)
+            modules: toReadableProgramBuildInfoResolutionCacheWithRedirects(cacheResolutions.modules),
+            typeRefs: toReadableProgramBuildInfoResolutionCacheWithRedirects(cacheResolutions.typeRefs)
         };
+    }
+
+    function toReadableProgramBuildInfoResolutionCacheWithRedirects(cache: ts.ProgramBuildInfoResolutionCacheWithRedirects | undefined): ReadableProgramBuildInfoResolutionCacheWithRedirects | undefined {
+        return cache ?
+            ts.isArray(cache) ?
+                toReadableProgramBuildInfoResolutionCache(cache) :
+                {
+                    own: toReadableProgramBuildInfoResolutionCache(cache.own),
+                    redirects: cache.redirects.map(r => ({ ...r, cache: toReadableProgramBuildInfoResolutionCache(r.cache)! }))
+                }
+            : undefined;
     }
 
     function toReadableProgramBuildInfoResolution(resolution: ts.ProgramBuildInfoResolution, index: number): ReadableProgramBuildInfoResolution {

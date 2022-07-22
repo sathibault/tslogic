@@ -4,6 +4,8 @@ import {
 import {
     getPkgImportContent,
     getPkgTypeRefContent,
+    getWatchSystemWithMultipleProjects,
+    getWatchSystemWithMultipleProjectsWithBuild,
     getWatchSystemWithNode16,
     getWatchSystemWithNode16WithBuild,
     getWatchSystemWithOut,
@@ -103,6 +105,45 @@ describe("unittests:: tsbuildWatch:: watchMode:: cacheResolutions::", () => {
                         caption: "Random edit",
                         change: sys => sys.appendFile("/src/project/randomFileForImport.ts", `export const k = 10;`),
                         timeouts: sys => sys.runQueuedTimeoutCallbacks(),
+                    },
+                ]
+            });
+        }
+    });
+
+    describe("multi project", () => {
+        verifyTscWatchMultiProject("multi project", getWatchSystemWithMultipleProjects);
+        verifyTscWatchMultiProject("multi project already built", getWatchSystemWithMultipleProjectsWithBuild);
+        function verifyTscWatchMultiProject(subScenario: string, sys: () => TestServerHost) {
+            verifyTscWatch({
+                scenario: "cacheResolutions",
+                subScenario,
+                sys,
+                commandLineArgs: ["-b", "-w", "--explainFiles", "-v"],
+                changes: [
+                    {
+                        caption: "modify aRandomFileForImport by adding import",
+                        change: sys => sys.prependFile("/src/project/aRandomFileForImport.ts", `export type { ImportInterface0 } from "pkg0";\n`),
+                        timeouts: sys => {
+                            sys.runQueuedTimeoutCallbacks();
+                            sys.runQueuedTimeoutCallbacks();
+                        },
+                    },
+                    {
+                        caption: "modify bRandomFileForImport by adding import",
+                        change: sys => sys.prependFile("/src/project/bRandomFileForImport.ts", `export type { ImportInterface0 } from "pkg0";\n`),
+                        timeouts: sys => {
+                            sys.runQueuedTimeoutCallbacks();
+                            sys.runQueuedTimeoutCallbacks();
+                        },
+                    },
+                    {
+                        caption: "modify cRandomFileForImport by adding import",
+                        change: sys => sys.prependFile("/src/project/cRandomFileForImport.ts", `export type { ImportInterface0 } from "pkg0";\n`),
+                        timeouts: sys => {
+                            sys.runQueuedTimeoutCallbacks();
+                            sys.runQueuedTimeoutCallbacks();
+                        },
                     },
                 ]
             });
