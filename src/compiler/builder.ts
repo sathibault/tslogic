@@ -1964,7 +1964,8 @@ export interface ProgramBuildInfoPathDecoder {
     getCanonicalFileName: GetCanonicalFileName;
 }
 
-function getProgramBuildInfoFilePathDecoder(fileNames: readonly string[], buildInfoPath: string, currentDirectory: string, getCanonicalFileName: GetCanonicalFileName): ProgramBuildInfoPathDecoder {
+/** @internal */
+export function getProgramBuildInfoFilePathDecoder(fileNames: readonly string[], buildInfoPath: string, currentDirectory: string, getCanonicalFileName: GetCanonicalFileName): ProgramBuildInfoPathDecoder {
     const buildInfoDirectory = getDirectoryPath(getNormalizedAbsolutePath(buildInfoPath, currentDirectory));
     let filePaths: Path[] | undefined;
     let fileAbsolutePaths: string[] | undefined;
@@ -2133,9 +2134,10 @@ export function createOldBuildInfoProgram(
     type Resolution = ResolvedModuleWithFailedLookupLocations & ResolvedTypeReferenceDirectiveWithFailedLookupLocations;
     type ResolutionEntry = [name: string, resolutionId: ProgramBuildInfoResolutionId, mode: ResolutionMode];
     type DecodedResolvedMap = CacheWithRedirects<Path, ModeAwareCache<ProgramBuildInfoResolutionId>>;
+    type DecodedModuleNameToDirectoryMap = CacheWithRedirects<ModeAwareCacheKey, Map<Path, ProgramBuildInfoResolutionId>>;
     const decodedResolvedModules: DecodedResolvedMap = createCacheWithRedirects(compilerOptions);
     const decodedResolvedTypeRefs: DecodedResolvedMap = createCacheWithRedirects(compilerOptions);
-    const decodedModuleNameToDirectoryMap = createCacheWithRedirects<ModeAwareCacheKey, Map<Path, ProgramBuildInfoResolutionId>>(compilerOptions);
+    const decodedModuleNameToDirectoryMap: DecodedModuleNameToDirectoryMap = createCacheWithRedirects(compilerOptions);
 
     let resolutions: (Resolution | false)[] | undefined;
     let originalPathOrResolvedFileNames: string[] | undefined;
@@ -2180,7 +2182,7 @@ export function createOldBuildInfoProgram(
         mode: ResolutionMode,
         redirectedReference: ResolvedProjectReference | undefined,
         moduleNameToDirectoryMap: CacheWithRedirects<ModeAwareCacheKey, Map<Path, T>> | undefined,
-        decodedModuleNameToDirectoryMap: CacheWithRedirects<ModeAwareCacheKey, Map<Path, ProgramBuildInfoResolutionId>> | undefined,
+        decodedModuleNameToDirectoryMap: DecodedModuleNameToDirectoryMap | undefined,
     ): Resolution | undefined {
         // If we are using the cache, directly get from there
         const fromCache = cache?.getMapOfCacheRedirects(redirectedReference)?.get(dirPath)?.get(name, mode) ||
@@ -2216,7 +2218,7 @@ export function createOldBuildInfoProgram(
         decodedReusableCache: DecodedResolvedMap,
         options: CompilerOptions,
         reusableCache: ProgramBuildInfoResolutionCache,
-        decodedModuleNameToDirectoryMap: CacheWithRedirects<ModeAwareCacheKey, Map<Path, ProgramBuildInfoResolutionId>> | undefined,
+        decodedModuleNameToDirectoryMap: DecodedModuleNameToDirectoryMap | undefined,
     ) {
         const map = decodedReusableCache.getOrCreateMap(options || {}, /*create*/ true);
         reusableCache.forEach(([dirId, entryId]) => {
@@ -2229,7 +2231,7 @@ export function createOldBuildInfoProgram(
         entries: readonly ProgramBuildInfoResolutionEntryId[],
         dirPath: Path,
         options: CompilerOptions,
-        decodedModuleNameToDirectoryMap: CacheWithRedirects<ModeAwareCacheKey, Map<Path, ProgramBuildInfoResolutionId>> | undefined,
+        decodedModuleNameToDirectoryMap: DecodedModuleNameToDirectoryMap | undefined,
     ) {
         const modeAwareCache = createModeAwareCache<ProgramBuildInfoResolutionId>();
         entries.forEach(entryId => {
