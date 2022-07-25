@@ -1687,6 +1687,7 @@ export function createLanguageService(
             trace: maybeBind(host, host.trace),
             resolveModuleNames: maybeBind(host, host.resolveModuleNames),
             getModuleResolutionCache: maybeBind(host, host.getModuleResolutionCache),
+            getTypeReferenceDirectiveResolutionCache: maybeBind(host, host.getTypeReferenceDirectiveResolutionCache),
             createHash: maybeBind(host, host.createHash),
             resolveTypeReferenceDirectives: maybeBind(host, host.resolveTypeReferenceDirectives),
             resolveModuleNameLiterals: maybeBind(host, host.resolveModuleNameLiterals),
