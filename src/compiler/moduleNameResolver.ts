@@ -201,6 +201,7 @@ function resolvedTypeScriptOnly(resolved: Resolved | undefined): PathAndPackageI
 }
 
 function createResolvedModuleWithFailedLookupLocations(
+    compilerOptions: CompilerOptions,
     resolved: Resolved | undefined,
     isExternalLibraryImport: boolean | undefined,
     failedLookupLocations: string[],
@@ -209,14 +210,14 @@ function createResolvedModuleWithFailedLookupLocations(
     resultFromCache: ResolvedModuleWithFailedLookupLocations | undefined
 ): ResolvedModuleWithFailedLookupLocations {
     if (resultFromCache) {
-        resultFromCache.failedLookupLocations = updateResolutionField(resultFromCache.failedLookupLocations, failedLookupLocations);
+        resultFromCache.failedLookupLocations = updateResolutionField(resultFromCache.failedLookupLocations, (!compilerOptions.cacheResolutions || !resultFromCache.resolvedModule?.resolvedFileName) ? failedLookupLocations : emptyArray);
         resultFromCache.affectingLocations = updateResolutionField(resultFromCache.affectingLocations, affectingLocations);
         resultFromCache.resolutionDiagnostics = updateResolutionField(resultFromCache.resolutionDiagnostics, diagnostics);
         return resultFromCache;
     }
     return {
         resolvedModule: resolved && { resolvedFileName: resolved.path, originalPath: resolved.originalPath === true ? undefined : resolved.originalPath, extension: resolved.extension, isExternalLibraryImport, packageId: resolved.packageId },
-        failedLookupLocations: initializeResolutionField(failedLookupLocations),
+        failedLookupLocations: initializeResolutionField(!compilerOptions.cacheResolutions || !resolved?.path ? failedLookupLocations : emptyArray),
         affectingLocations: initializeResolutionField(affectingLocations),
         resolutionDiagnostics: initializeResolutionField(diagnostics),
     };
@@ -533,7 +534,7 @@ export function resolveTypeReferenceDirective(typeReferenceDirectiveName: string
     }
     result = {
         resolvedTypeReferenceDirective,
-        failedLookupLocations: initializeResolutionField(failedLookupLocations),
+        failedLookupLocations: initializeResolutionField(!options.cacheResolutions || !resolvedTypeReferenceDirective?.resolvedFileName ? failedLookupLocations : emptyArray),
         affectingLocations: initializeResolutionField(affectingLocations),
         resolutionDiagnostics: initializeResolutionField(diagnostics),
     };
@@ -1595,6 +1596,7 @@ function nodeModuleNameResolverWorker(features: NodeResolutionFeatures, moduleNa
     }
 
     return createResolvedModuleWithFailedLookupLocations(
+        compilerOptions,
         result?.value?.resolved,
         result?.value?.isExternalLibraryImport,
         failedLookupLocations,
@@ -2817,6 +2819,7 @@ export function classicNameResolver(moduleName: string, containingFile: string, 
         tryResolve(Extensions.JavaScript | (compilerOptions.resolveJsonModule ? Extensions.Json : 0));
     // No originalPath because classic resolution doesn't resolve realPath
     return createResolvedModuleWithFailedLookupLocations(
+        compilerOptions,
         resolved && resolved.value,
          /*isExternalLibraryImport*/ false,
         failedLookupLocations,
@@ -2886,6 +2889,7 @@ export function loadModuleFromGlobalCache(moduleName: string, projectName: strin
     };
     const resolved = loadModuleFromImmediateNodeModulesDirectory(Extensions.Declaration, moduleName, globalCache, state, /*typesScopeOnly*/ false, /*cache*/ undefined, /*redirectedReference*/ undefined);
     return createResolvedModuleWithFailedLookupLocations(
+        compilerOptions,
         resolved,
         /*isExternalLibraryImport*/ true,
         failedLookupLocations,

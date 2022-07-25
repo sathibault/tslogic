@@ -962,7 +962,6 @@ export type ProgramBuildInfoResolvedTypeReferenceDirective = Omit<ResolvedTypeRe
 export interface ProgramBuildInfoResolution {
     readonly resolvedModule: ProgramBuildInfoResolvedModuleFull | undefined;
     readonly resolvedTypeReferenceDirective: ProgramBuildInfoResolvedTypeReferenceDirective | undefined;
-    readonly failedLookupLocations: readonly ProgramBuildInfoAbsoluteFileId[] | undefined;
     readonly affectingLocations: readonly ProgramBuildInfoAbsoluteFileId[] | undefined;
     readonly resolutionDiagnostics: readonly ReusableDiagnostic[] | undefined;
 }
@@ -1396,7 +1395,6 @@ function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | unde
         return {
             resolvedModule: toProgramBuildInfoResolved((resolution as ResolvedModuleWithFailedLookupLocations).resolvedModule),
             resolvedTypeReferenceDirective: toProgramBuildInfoResolved((resolution as ResolvedTypeReferenceDirectiveWithFailedLookupLocations).resolvedTypeReferenceDirective),
-            failedLookupLocations: toReadonlyArrayOrUndefined(resolution.failedLookupLocations, toAbsoluteFileId),
             affectingLocations: toReadonlyArrayOrUndefined(resolution.affectingLocations, toAbsoluteFileId),
             resolutionDiagnostics: toReadonlyArrayOrUndefined(resolution.resolutionDiagnostics, toReusableDiagnostic),
         };
@@ -2296,7 +2294,6 @@ export function createOldBuildInfoProgram(
             return resolutions[resolutionId - 1] = {
                 resolvedModule: toResolved(resolution.resolvedModule, resolvedFileName, extenstion),
                 resolvedTypeReferenceDirective: toResolved(resolution.resolvedTypeReferenceDirective, resolvedFileName, extenstion),
-                failedLookupLocations: resolution.failedLookupLocations?.map(resuableCacheResolutions!.getProgramBuildInfoFilePathDecoder().toFileAbsolutePath) || [],
                 affectingLocations: resolution.affectingLocations?.map(resuableCacheResolutions!.getProgramBuildInfoFilePathDecoder().toFileAbsolutePath),
                 resolutionDiagnostics: resolution.resolutionDiagnostics?.length ? convertToDiagnostics(resolution.resolutionDiagnostics, /*newProgram*/ undefined!) as Diagnostic[] : undefined
             };
