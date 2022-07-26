@@ -58,14 +58,14 @@ File '/user/username/projects/myproject/src/fileB.mjs.js' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.jsx' does not exist.
 Directory '/user/username/projects/myproject/src/fileB.mjs' does not exist, skipping all lookups in it.
 ======== Module name './fileB.mjs' was not resolved. ========
-DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
-Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
-DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src 0 undefined Failed Lookup Locations
-Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src 0 undefined Failed Lookup Locations
 File '/a/lib/package.json' does not exist.
 File '/a/package.json' does not exist.
 File '/package.json' does not exist.
 FileWatcher:: Added:: WatchInfo: /a/lib/lib.es2016.full.d.ts 250 undefined Source file
+DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
+Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
+DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src 0 undefined Failed Lookup Locations
+Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src 0 undefined Failed Lookup Locations
 FileWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/package.json 2000 undefined File location affecting resolution
 FileWatcher:: Added:: WatchInfo: /user/username/projects/myproject/package.json 2000 undefined File location affecting resolution
 DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/node_modules/@types 1 undefined Type roots
@@ -118,9 +118,9 @@ FsWatches::
   {}
 /user/username/projects/myproject/src/filea.ts:
   {}
-/user/username/projects/myproject/src:
-  {}
 /a/lib/lib.es2016.full.d.ts:
+  {}
+/user/username/projects/myproject/src:
   {}
 /user/username/projects/myproject/package.json:
   {}
@@ -220,9 +220,9 @@ FsWatches::
   {}
 /user/username/projects/myproject/src/filea.ts:
   {}
-/user/username/projects/myproject/src:
-  {}
 /a/lib/lib.es2016.full.d.ts:
+  {}
+/user/username/projects/myproject/src:
   {}
 /user/username/projects/myproject/package.json:
   {}
@@ -280,11 +280,11 @@ File '/user/username/projects/myproject/src/fileB.mjs.js' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.jsx' does not exist.
 Directory '/user/username/projects/myproject/src/fileB.mjs' does not exist, skipping all lookups in it.
 ======== Module name './fileB.mjs' was not resolved. ========
-DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
-Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
 File '/a/lib/package.json' does not exist according to earlier cached lookups.
 File '/a/package.json' does not exist according to earlier cached lookups.
 File '/package.json' does not exist according to earlier cached lookups.
+DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
+Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
 [96msrc/fileA.ts[0m:[93m1[0m:[93m21[0m - [91merror[0m[90m TS2307: [0mCannot find module './fileB.mjs' or its corresponding type declarations.
 
 [7m1[0m import { foo } from "./fileB.mjs";
@@ -327,9 +327,9 @@ FsWatches::
   {}
 /user/username/projects/myproject/src/filea.ts:
   {}
-/user/username/projects/myproject/src:
-  {}
 /a/lib/lib.es2016.full.d.ts:
+  {}
+/user/username/projects/myproject/src:
   {}
 /user/username/projects/myproject/package.json:
   {}
@@ -426,9 +426,9 @@ FsWatches::
   {}
 /user/username/projects/myproject/src/filea.ts:
   {}
-/user/username/projects/myproject/src:
-  {}
 /a/lib/lib.es2016.full.d.ts:
+  {}
+/user/username/projects/myproject/src:
   {}
 /user/username/projects/myproject/package.json:
   {}
@@ -522,9 +522,9 @@ FsWatches::
   {}
 /user/username/projects/myproject/src/filea.ts:
   {}
-/user/username/projects/myproject/src:
-  {}
 /a/lib/lib.es2016.full.d.ts:
+  {}
+/user/username/projects/myproject/src:
   {}
 /user/username/projects/myproject/package.json:
   {}
@@ -587,11 +587,11 @@ File '/user/username/projects/myproject/src/fileB.mjs.js' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.jsx' does not exist.
 Directory '/user/username/projects/myproject/src/fileB.mjs' does not exist, skipping all lookups in it.
 ======== Module name './fileB.mjs' was not resolved. ========
-DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
-Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
 File '/a/lib/package.json' does not exist according to earlier cached lookups.
 File '/a/package.json' does not exist according to earlier cached lookups.
 File '/package.json' does not exist according to earlier cached lookups.
+DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
+Elapsed:: *ms DirectoryWatcher:: Added:: WatchInfo: /user/username/projects/myproject/src/fileB.mjs 1 undefined Failed Lookup Locations
 FileWatcher:: Added:: WatchInfo: /user/username/projects/package.json 2000 undefined File location affecting resolution
 [96msrc/fileA.ts[0m:[93m1[0m:[93m21[0m - [91merror[0m[90m TS2307: [0mCannot find module './fileB.mjs' or its corresponding type declarations.
 
@@ -637,9 +637,9 @@ FsWatches::
   {}
 /user/username/projects/myproject/src/filea.ts:
   {}
-/user/username/projects/myproject/src:
-  {}
 /a/lib/lib.es2016.full.d.ts:
+  {}
+/user/username/projects/myproject/src:
   {}
 /user/username/projects/myproject/package.json:
   {}

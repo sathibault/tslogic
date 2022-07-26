@@ -1362,38 +1362,32 @@ Info 182  [00:04:20.000] Found 'package.json' at '/user/username/projects/myproj
 Info 183  [00:04:21.000] 'package.json' does not have a 'typesVersions' field.
 Info 184  [00:04:22.000] File '/user/username/projects/myproject/src/package.json' does not exist according to earlier cached lookups.
 Info 185  [00:04:23.000] File '/user/username/projects/myproject/package.json' exists according to earlier cached lookups.
-Info 186  [00:04:24.000] ======== Resolving module './fileB.mjs' from '/user/username/projects/myproject/src/fileA.ts'. ========
-Info 187  [00:04:25.000] Module resolution kind is not specified, using 'Node16'.
-Info 188  [00:04:26.000] Resolving in CJS mode with conditions 'node', 'require', 'types'.
-Info 189  [00:04:27.000] Loading module as file / folder, candidate module location '/user/username/projects/myproject/src/fileB.mjs', target file types: TypeScript, JavaScript, Declaration.
-Info 190  [00:04:28.000] File name '/user/username/projects/myproject/src/fileB.mjs' has a '.mjs' extension - stripping it.
-Info 191  [00:04:29.000] File '/user/username/projects/myproject/src/fileB.mts' exist - use it as a name resolution result.
-Info 192  [00:04:30.000] ======== Module name './fileB.mjs' was successfully resolved to '/user/username/projects/myproject/src/fileB.mts'. ========
-Info 193  [00:04:31.000] File '/a/lib/package.json' does not exist according to earlier cached lookups.
-Info 194  [00:04:32.000] File '/a/package.json' does not exist according to earlier cached lookups.
-Info 195  [00:04:33.000] File '/package.json' does not exist according to earlier cached lookups.
-Info 196  [00:04:34.000] FileWatcher:: Close:: WatchInfo: /user/username/projects/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
-Info 197  [00:04:35.000] Finishing updateGraphWorker: Project: /user/username/projects/myproject/src/tsconfig.json Version: 5 structureChanged: true structureIsReused:: SafeModules Elapsed:: *ms
-Info 198  [00:04:36.000] Different program with same set of files
-Info 199  [00:04:37.000] Running: *ensureProjectForOpenFiles*
-Info 200  [00:04:38.000] Before ensureProjectForOpenFiles:
-Info 201  [00:04:39.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
-Info 201  [00:04:40.000] 	Files (3)
+Info 186  [00:04:24.000] Reusing resolution of module './fileB.mjs' from '/user/username/projects/myproject/src/fileA.ts' of old program, it was successfully resolved to '/user/username/projects/myproject/src/fileB.mts'.
+Info 187  [00:04:25.000] File '/a/lib/package.json' does not exist according to earlier cached lookups.
+Info 188  [00:04:26.000] File '/a/package.json' does not exist according to earlier cached lookups.
+Info 189  [00:04:27.000] File '/package.json' does not exist according to earlier cached lookups.
+Info 190  [00:04:28.000] FileWatcher:: Close:: WatchInfo: /user/username/projects/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
+Info 191  [00:04:29.000] Finishing updateGraphWorker: Project: /user/username/projects/myproject/src/tsconfig.json Version: 5 structureChanged: true structureIsReused:: SafeModules Elapsed:: *ms
+Info 192  [00:04:30.000] Different program with same set of files
+Info 193  [00:04:31.000] Running: *ensureProjectForOpenFiles*
+Info 194  [00:04:32.000] Before ensureProjectForOpenFiles:
+Info 195  [00:04:33.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
+Info 195  [00:04:34.000] 	Files (3)
 
-Info 201  [00:04:41.000] -----------------------------------------------
-Info 201  [00:04:42.000] Open files: 
-Info 201  [00:04:43.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
-Info 201  [00:04:44.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
-Info 201  [00:04:45.000] After ensureProjectForOpenFiles:
-Info 202  [00:04:46.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
-Info 202  [00:04:47.000] 	Files (3)
+Info 195  [00:04:35.000] -----------------------------------------------
+Info 195  [00:04:36.000] Open files: 
+Info 195  [00:04:37.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
+Info 195  [00:04:38.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
+Info 195  [00:04:39.000] After ensureProjectForOpenFiles:
+Info 196  [00:04:40.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
+Info 196  [00:04:41.000] 	Files (3)
 
-Info 202  [00:04:48.000] -----------------------------------------------
-Info 202  [00:04:49.000] Open files: 
-Info 202  [00:04:50.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
-Info 202  [00:04:51.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
-Info 202  [00:04:52.000] got projects updated in background, updating diagnostics for /user/username/projects/myproject/src/fileA.ts
-Info 203  [00:04:53.000] event:
+Info 196  [00:04:42.000] -----------------------------------------------
+Info 196  [00:04:43.000] Open files: 
+Info 196  [00:04:44.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
+Info 196  [00:04:45.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
+Info 196  [00:04:46.000] got projects updated in background, updating diagnostics for /user/username/projects/myproject/src/fileA.ts
+Info 197  [00:04:47.000] event:
     {"seq":0,"type":"event","event":"projectsUpdatedInBackground","body":{"openFiles":["/user/username/projects/myproject/src/fileA.ts"]}}
 After running timeout callbacks
 
@@ -1419,7 +1413,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 204  [00:04:54.000] request:
+Info 198  [00:04:48.000] request:
     {
       "command": "geterr",
       "arguments": {
@@ -1479,7 +1473,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 205  [00:04:55.000] response:
+Info 199  [00:04:49.000] response:
     {
       "responseRequired": false
     }
@@ -1507,7 +1501,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 206  [00:04:56.000] event:
+Info 200  [00:04:50.000] event:
     {"seq":0,"type":"event","event":"syntaxDiag","body":{"file":"/user/username/projects/myproject/src/fileA.ts","diagnostics":[]}}
 After checking timeout queue length (1) and running
 
@@ -1557,7 +1551,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 207  [00:04:57.000] event:
+Info 201  [00:04:51.000] event:
     {"seq":0,"type":"event","event":"semanticDiag","body":{"file":"/user/username/projects/myproject/src/fileA.ts","diagnostics":[{"start":{"line":1,"offset":21},"end":{"line":1,"offset":34},"text":"The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import(\"./fileB.mjs\")' call instead.\n  To convert this file to an ECMAScript module, change its file extension to '.mts', or add the field `\"type\": \"module\"` to '/user/username/projects/myproject/package.json'.","code":1479,"category":"error"}]}}
 Before running immediate callbacks and checking length (1)
 
@@ -1607,9 +1601,9 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 208  [00:04:58.000] event:
+Info 202  [00:04:52.000] event:
     {"seq":0,"type":"event","event":"suggestionDiag","body":{"file":"/user/username/projects/myproject/src/fileA.ts","diagnostics":[]}}
-Info 209  [00:04:59.000] event:
+Info 203  [00:04:53.000] event:
     {"seq":0,"type":"event","event":"requestCompleted","body":{"request_seq":4}}
 Before running immediate callbacks and checking length (1)
 
@@ -1635,10 +1629,10 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 210  [00:05:00.000] Delete package.json
-Info 211  [00:05:02.000] FileWatcher:: Triggered with /user/username/projects/myproject/package.json 2:: WatchInfo: /user/username/projects/myproject/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
-Info 212  [00:05:03.000] Scheduled: /user/username/projects/myproject/src/tsconfig.jsonFailedLookupInvalidation
-Info 213  [00:05:04.000] Elapsed:: *ms FileWatcher:: Triggered with /user/username/projects/myproject/package.json 2:: WatchInfo: /user/username/projects/myproject/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
+Info 204  [00:04:54.000] Delete package.json
+Info 205  [00:04:56.000] FileWatcher:: Triggered with /user/username/projects/myproject/package.json 2:: WatchInfo: /user/username/projects/myproject/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
+Info 206  [00:04:57.000] Scheduled: /user/username/projects/myproject/src/tsconfig.jsonFailedLookupInvalidation
+Info 207  [00:04:58.000] Elapsed:: *ms FileWatcher:: Triggered with /user/username/projects/myproject/package.json 2:: WatchInfo: /user/username/projects/myproject/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
 Before running timeout callbacks
 //// [/user/username/projects/myproject/package.json] deleted
 
@@ -1664,9 +1658,9 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 214  [00:05:05.000] Running: /user/username/projects/myproject/src/tsconfig.jsonFailedLookupInvalidation
-Info 215  [00:05:06.000] Scheduled: /user/username/projects/myproject/src/tsconfig.json
-Info 216  [00:05:07.000] Scheduled: *ensureProjectForOpenFiles*
+Info 208  [00:04:59.000] Running: /user/username/projects/myproject/src/tsconfig.jsonFailedLookupInvalidation
+Info 209  [00:05:00.000] Scheduled: /user/username/projects/myproject/src/tsconfig.json
+Info 210  [00:05:01.000] Scheduled: *ensureProjectForOpenFiles*
 After running timeout callbacks
 
 PolledWatches::
@@ -1715,49 +1709,49 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 217  [00:05:08.000] Running: /user/username/projects/myproject/src/tsconfig.json
-Info 218  [00:05:09.000] Starting updateGraphWorker: Project: /user/username/projects/myproject/src/tsconfig.json
-Info 219  [00:05:10.000] File '/a/lib/package.json' does not exist according to earlier cached lookups.
-Info 220  [00:05:11.000] File '/a/package.json' does not exist according to earlier cached lookups.
+Info 211  [00:05:02.000] Running: /user/username/projects/myproject/src/tsconfig.json
+Info 212  [00:05:03.000] Starting updateGraphWorker: Project: /user/username/projects/myproject/src/tsconfig.json
+Info 213  [00:05:04.000] File '/a/lib/package.json' does not exist according to earlier cached lookups.
+Info 214  [00:05:05.000] File '/a/package.json' does not exist according to earlier cached lookups.
+Info 215  [00:05:06.000] File '/package.json' does not exist according to earlier cached lookups.
+Info 216  [00:05:07.000] File '/user/username/projects/myproject/src/package.json' does not exist according to earlier cached lookups.
+Info 217  [00:05:08.000] File '/user/username/projects/myproject/package.json' does not exist.
+Info 218  [00:05:09.000] File '/user/username/projects/package.json' does not exist according to earlier cached lookups.
+Info 219  [00:05:10.000] File '/user/username/package.json' does not exist according to earlier cached lookups.
+Info 220  [00:05:11.000] File '/user/package.json' does not exist according to earlier cached lookups.
 Info 221  [00:05:12.000] File '/package.json' does not exist according to earlier cached lookups.
 Info 222  [00:05:13.000] File '/user/username/projects/myproject/src/package.json' does not exist according to earlier cached lookups.
-Info 223  [00:05:14.000] File '/user/username/projects/myproject/package.json' does not exist.
+Info 223  [00:05:14.000] File '/user/username/projects/myproject/package.json' does not exist according to earlier cached lookups.
 Info 224  [00:05:15.000] File '/user/username/projects/package.json' does not exist according to earlier cached lookups.
 Info 225  [00:05:16.000] File '/user/username/package.json' does not exist according to earlier cached lookups.
 Info 226  [00:05:17.000] File '/user/package.json' does not exist according to earlier cached lookups.
 Info 227  [00:05:18.000] File '/package.json' does not exist according to earlier cached lookups.
-Info 228  [00:05:19.000] File '/user/username/projects/myproject/src/package.json' does not exist according to earlier cached lookups.
-Info 229  [00:05:20.000] File '/user/username/projects/myproject/package.json' does not exist according to earlier cached lookups.
-Info 230  [00:05:21.000] File '/user/username/projects/package.json' does not exist according to earlier cached lookups.
-Info 231  [00:05:22.000] File '/user/username/package.json' does not exist according to earlier cached lookups.
-Info 232  [00:05:23.000] File '/user/package.json' does not exist according to earlier cached lookups.
-Info 233  [00:05:24.000] File '/package.json' does not exist according to earlier cached lookups.
-Info 234  [00:05:25.000] Reusing resolution of module './fileB.mjs' from '/user/username/projects/myproject/src/fileA.ts' of old program, it was successfully resolved to '/user/username/projects/myproject/src/fileB.mts'.
-Info 235  [00:05:26.000] File '/a/lib/package.json' does not exist according to earlier cached lookups.
-Info 236  [00:05:27.000] File '/a/package.json' does not exist according to earlier cached lookups.
-Info 237  [00:05:28.000] File '/package.json' does not exist according to earlier cached lookups.
-Info 238  [00:05:29.000] FileWatcher:: Added:: WatchInfo: /user/username/projects/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
-Info 239  [00:05:30.000] Finishing updateGraphWorker: Project: /user/username/projects/myproject/src/tsconfig.json Version: 6 structureChanged: true structureIsReused:: SafeModules Elapsed:: *ms
-Info 240  [00:05:31.000] Different program with same set of files
-Info 241  [00:05:32.000] Running: *ensureProjectForOpenFiles*
-Info 242  [00:05:33.000] Before ensureProjectForOpenFiles:
-Info 243  [00:05:34.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
-Info 243  [00:05:35.000] 	Files (3)
+Info 228  [00:05:19.000] Reusing resolution of module './fileB.mjs' from '/user/username/projects/myproject/src/fileA.ts' of old program, it was successfully resolved to '/user/username/projects/myproject/src/fileB.mts'.
+Info 229  [00:05:20.000] File '/a/lib/package.json' does not exist according to earlier cached lookups.
+Info 230  [00:05:21.000] File '/a/package.json' does not exist according to earlier cached lookups.
+Info 231  [00:05:22.000] File '/package.json' does not exist according to earlier cached lookups.
+Info 232  [00:05:23.000] FileWatcher:: Added:: WatchInfo: /user/username/projects/package.json 2000 undefined Project: /user/username/projects/myproject/src/tsconfig.json WatchType: File location affecting resolution
+Info 233  [00:05:24.000] Finishing updateGraphWorker: Project: /user/username/projects/myproject/src/tsconfig.json Version: 6 structureChanged: true structureIsReused:: SafeModules Elapsed:: *ms
+Info 234  [00:05:25.000] Different program with same set of files
+Info 235  [00:05:26.000] Running: *ensureProjectForOpenFiles*
+Info 236  [00:05:27.000] Before ensureProjectForOpenFiles:
+Info 237  [00:05:28.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
+Info 237  [00:05:29.000] 	Files (3)
 
-Info 243  [00:05:36.000] -----------------------------------------------
-Info 243  [00:05:37.000] Open files: 
-Info 243  [00:05:38.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
-Info 243  [00:05:39.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
-Info 243  [00:05:40.000] After ensureProjectForOpenFiles:
-Info 244  [00:05:41.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
-Info 244  [00:05:42.000] 	Files (3)
+Info 237  [00:05:30.000] -----------------------------------------------
+Info 237  [00:05:31.000] Open files: 
+Info 237  [00:05:32.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
+Info 237  [00:05:33.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
+Info 237  [00:05:34.000] After ensureProjectForOpenFiles:
+Info 238  [00:05:35.000] Project '/user/username/projects/myproject/src/tsconfig.json' (Configured)
+Info 238  [00:05:36.000] 	Files (3)
 
-Info 244  [00:05:43.000] -----------------------------------------------
-Info 244  [00:05:44.000] Open files: 
-Info 244  [00:05:45.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
-Info 244  [00:05:46.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
-Info 244  [00:05:47.000] got projects updated in background, updating diagnostics for /user/username/projects/myproject/src/fileA.ts
-Info 245  [00:05:48.000] event:
+Info 238  [00:05:37.000] -----------------------------------------------
+Info 238  [00:05:38.000] Open files: 
+Info 238  [00:05:39.000] 	FileName: /user/username/projects/myproject/src/fileA.ts ProjectRootPath: undefined
+Info 238  [00:05:40.000] 		Projects: /user/username/projects/myproject/src/tsconfig.json
+Info 238  [00:05:41.000] got projects updated in background, updating diagnostics for /user/username/projects/myproject/src/fileA.ts
+Info 239  [00:05:42.000] event:
     {"seq":0,"type":"event","event":"projectsUpdatedInBackground","body":{"openFiles":["/user/username/projects/myproject/src/fileA.ts"]}}
 After running timeout callbacks
 
@@ -1785,7 +1779,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 246  [00:05:49.000] request:
+Info 240  [00:05:43.000] request:
     {
       "command": "geterr",
       "arguments": {
@@ -1849,7 +1843,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 247  [00:05:50.000] response:
+Info 241  [00:05:44.000] response:
     {
       "responseRequired": false
     }
@@ -1879,7 +1873,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 248  [00:05:51.000] event:
+Info 242  [00:05:45.000] event:
     {"seq":0,"type":"event","event":"syntaxDiag","body":{"file":"/user/username/projects/myproject/src/fileA.ts","diagnostics":[]}}
 After checking timeout queue length (1) and running
 
@@ -1933,7 +1927,7 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 249  [00:05:52.000] event:
+Info 243  [00:05:46.000] event:
     {"seq":0,"type":"event","event":"semanticDiag","body":{"file":"/user/username/projects/myproject/src/fileA.ts","diagnostics":[{"start":{"line":1,"offset":21},"end":{"line":1,"offset":34},"text":"The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import(\"./fileB.mjs\")' call instead.\n  To convert this file to an ECMAScript module, change its file extension to '.mts' or create a local package.json file with `{ \"type\": \"module\" }`.","code":1479,"category":"error"}]}}
 Before running immediate callbacks and checking length (1)
 
@@ -1987,9 +1981,9 @@ FsWatchesRecursive::
 /user/username/projects/myproject/src:
   {}
 
-Info 250  [00:05:53.000] event:
+Info 244  [00:05:47.000] event:
     {"seq":0,"type":"event","event":"suggestionDiag","body":{"file":"/user/username/projects/myproject/src/fileA.ts","diagnostics":[]}}
-Info 251  [00:05:54.000] event:
+Info 245  [00:05:48.000] event:
     {"seq":0,"type":"event","event":"requestCompleted","body":{"request_seq":5}}
 Before running immediate callbacks and checking length (1)
 
