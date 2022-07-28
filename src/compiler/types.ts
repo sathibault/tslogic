@@ -6982,6 +6982,8 @@ export interface OldBuildInfoProgram {
 /** @internal */
 export interface OldBuildInfoProgramHost {
     fileExists(fileName: string): boolean;
+    createHash?(data: string): string;
+    getPackageJsonInfo(fileName: string): PackageJsonInfo | undefined;
 }
 
 /** @internal */

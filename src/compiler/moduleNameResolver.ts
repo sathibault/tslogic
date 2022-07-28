@@ -736,6 +736,7 @@ export interface PackageJsonInfoCache {
     /** @internal */ setPackageJsonInfo(packageJsonPath: string, info: PackageJsonInfo | boolean): void;
     /** @internal */ entries(): [Path, PackageJsonInfo | boolean][];
     /** @internal */ getInternalMap(): Map<Path, PackageJsonInfo | boolean> | undefined;
+    /** @internal */ clone(): PackageJsonInfoCache;
     clear(): void;
 }
 
@@ -859,9 +860,8 @@ export function createCacheWithRedirects<K, V>(ownOptions: CompilerOptions | und
     }
 }
 
-function createPackageJsonInfoCache(currentDirectory: string, getCanonicalFileName: (s: string) => string): PackageJsonInfoCache {
-    let cache: Map<Path, PackageJsonInfo | boolean> | undefined;
-    return { getPackageJsonInfo, setPackageJsonInfo, clear, entries, getInternalMap };
+function createPackageJsonInfoCache(currentDirectory: string, getCanonicalFileName: (s: string) => string, cache?: Map<Path, PackageJsonInfo | boolean>): PackageJsonInfoCache {
+    return { getPackageJsonInfo, setPackageJsonInfo, clear, entries, getInternalMap, clone };
     function getPackageJsonInfo(packageJsonPath: string) {
         return cache?.get(toPath(packageJsonPath, currentDirectory, getCanonicalFileName));
     }
@@ -877,6 +877,9 @@ function createPackageJsonInfoCache(currentDirectory: string, getCanonicalFileNa
     }
     function getInternalMap() {
         return cache;
+    }
+    function clone() {
+        return createPackageJsonInfoCache(currentDirectory, getCanonicalFileName, cache && new Map(cache));
     }
 }
 
