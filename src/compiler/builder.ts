@@ -79,6 +79,7 @@ import {
     OldBuildInfoProgramConstructor,
     OldBuildInfoProgramHost,
     outFile,
+    PackageJsonInfo,
     Path,
     Program,
     ProjectReference,
@@ -184,6 +185,7 @@ export interface ReusableBuilderProgramState extends BuilderState {
         modules: CacheWithRedirects<Path, ModeAwareCache<ResolvedModuleWithFailedLookupLocations>> | undefined;
         typeRefs: CacheWithRedirects<Path, ModeAwareCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations>> | undefined;
         moduleNameToDirectoryMap: CacheWithRedirects<ModeAwareCacheKey, Map<Path, ResolvedModuleWithFailedLookupLocations>>;
+        packageJsonCache: Map<Path, PackageJsonInfo | boolean> | undefined;
     };
     resuableCacheResolutions?: {
         cache: ProgramBuildInfoCacheResolutions;
@@ -966,6 +968,8 @@ export interface ProgramBuildInfoResolution {
     readonly resolutionDiagnostics: readonly ReusableDiagnostic[] | undefined;
 }
 /** @internal */
+export type ProgramBuildInfoHash = ProgramBuildInfoAbsoluteFileId | [fileId: ProgramBuildInfoAbsoluteFileId, hash: string];
+/** @internal */
 export type ProgramBuildInfoResolutionId = number & { __programBuildInfoResolutionIdBrand: any };
 /** @internal */
 export type ProgramBuildInfoResolutionNameId = number & { __programBuildInfoResolutionNameIdBrand: any };
@@ -989,6 +993,7 @@ export type ProgramBuildInfoResolutionCacheWithRedirects = ProgramBuildInfoResol
 export interface ProgramBuildInfoCacheResolutions {
     resolutions: readonly ProgramBuildInfoResolution[];
     names: readonly string[];
+    hash: readonly ProgramBuildInfoHash[] | undefined;
     resolutionEntries: readonly ProgramBuildInfoResolutionEntry[];
     modules: ProgramBuildInfoResolutionCacheWithRedirects | undefined;
     typeRefs: ProgramBuildInfoResolutionCacheWithRedirects | undefined;
@@ -1044,7 +1049,7 @@ export function isProgramBundleEmitBuildInfo(info: ProgramBuildInfo): info is Pr
 /**
  * Gets the program information to be emitted in buildInfo so that we can use it to create new program
  */
-function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | undefined, buildInfoPath: string,): BuildInfo {
+function getBuildInfo(state: BuilderProgramState, host: BuilderProgramHost, bundle: BundleBuildInfo | undefined, buildInfoPath: string,): BuildInfo {
     const currentDirectory = Debug.checkDefined(state.program).getCurrentDirectory();
     const getCanonicalFileName = createGetCanonicalFileName(state.program!.useCaseSensitiveFileNames());
     buildInfoPath = getNormalizedAbsolutePath(buildInfoPath, currentDirectory);
@@ -1059,6 +1064,7 @@ function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | unde
     let resolutionNameToResolutionNameId: Map<string, ProgramBuildInfoResolutionNameId> | undefined;
     let resolutionEntries: ProgramBuildInfoResolutionEntry[] | undefined;
     let resolutionEntryToResolutionEntryId: Map<string, ProgramBuildInfoResolutionEntryId> | undefined;
+    let affectedFilesHash: Map<ProgramBuildInfoAbsoluteFileId, string | undefined> | undefined;
     if (outFile(state.compilerOptions)) {
         // Copy all fileInfo, version and impliedFormat
         // Affects global scope and signature doesnt matter because with --out they arent calculated or needed to determine upto date ness
@@ -1316,6 +1322,7 @@ function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | unde
             cache: {
                 resolutions,
                 names,
+                hash: toProgramBuildInfoHashes(),
                 resolutionEntries,
                 modules,
                 typeRefs,
@@ -1395,9 +1402,30 @@ function getBuildInfo(state: BuilderProgramState, bundle: BundleBuildInfo | unde
         return {
             resolvedModule: toProgramBuildInfoResolved((resolution as ResolvedModuleWithFailedLookupLocations).resolvedModule),
             resolvedTypeReferenceDirective: toProgramBuildInfoResolved((resolution as ResolvedTypeReferenceDirectiveWithFailedLookupLocations).resolvedTypeReferenceDirective),
-            affectingLocations: toReadonlyArrayOrUndefined(resolution.affectingLocations, toAbsoluteFileId),
+            affectingLocations: toReadonlyArrayOrUndefined(resolution.affectingLocations, toAffectedFileId),
             resolutionDiagnostics: toReadonlyArrayOrUndefined(resolution.resolutionDiagnostics, toReusableDiagnostic),
         };
+    }
+
+    function toProgramBuildInfoHashes(): readonly ProgramBuildInfoHash[] | undefined {
+        if (!affectedFilesHash) return undefined;
+        const hashes: ProgramBuildInfoHash[] = [];
+        for (const key of arrayFrom(affectedFilesHash.keys()).sort(compareValues)) {
+            const value = affectedFilesHash.get(key);
+            hashes.push(value ? [key, value] : key);
+        }
+        return hashes;
+    }
+
+    function toAffectedFileId(file: string) {
+        const fileId = toAbsoluteFileId(file);
+        if (!affectedFilesHash?.has(fileId)) {
+            // Store the file hash
+            const packageJsonInfo = state.program!.getModuleResolutionCache()?.getPackageJsonInfo(file);
+            const text = typeof packageJsonInfo === "object" ? packageJsonInfo.contents.packageJsonText : undefined;
+            (affectedFilesHash ??= new Map()).set(fileId, text ? (host.createHash ?? generateDjb2Hash)(text) : undefined);
+        }
+        return fileId;
     }
 
     function toProgramBuildInfoResolved(resolved: ResolvedModuleFull | undefined): ProgramBuildInfoResolvedModuleFull | undefined;
@@ -1430,7 +1458,13 @@ function getCacheResolutions(state: BuilderProgramState, getCanonicalFileName: G
         const containingPath = toPath(state.program!.getAutomaticTypeDirectiveContainingFile(), currentDirectory, getCanonicalFileName);
         typeRefs = toPerDirectoryCache(state, getCanonicalFileName, typeRefs, containingPath, state.program!.getAutomaticTypeDirectiveResolutions());
     }
-    return state.cacheResolutions = { modules, typeRefs, moduleNameToDirectoryMap };
+    const packageJsonMap = state.program!.getModuleResolutionCache()?.getPackageJsonInfoCache().getInternalMap();
+    return state.cacheResolutions = {
+        modules,
+        typeRefs,
+        moduleNameToDirectoryMap,
+        packageJsonCache: packageJsonMap && new Map(packageJsonMap),
+    };
 }
 
 function toPerDirectoryCache(
@@ -1609,7 +1643,7 @@ export function createBuilderProgram(kind: BuilderProgramKind, { newProgram, hos
     }
 
     const state = createBuilderProgramState(newProgram, oldState, host.disableUseFileVersionAsSignature);
-    newProgram.getBuildInfo = (bundle, buildInfoPath) => getBuildInfo(state, bundle, buildInfoPath);
+    newProgram.getBuildInfo = (bundle, buildInfoPath) => getBuildInfo(state, host, bundle, buildInfoPath);
 
     // To ensure that we arent storing any references to old program or new program without state
     newProgram = undefined!; // TODO: GH#18217
