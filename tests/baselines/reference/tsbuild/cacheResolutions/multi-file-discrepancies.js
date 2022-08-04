@@ -421,11 +421,6 @@ CleanBuild:
             }
           ]
         }
-      ],
-      "packageJsons": [
-        "./node_modules/pkg0/package.json",
-        "./node_modules/pkg2/package.json",
-        "./node_modules/pkg3/package.json"
       ]
     }
   },
@@ -828,11 +823,6 @@ IncrementalBuild:
             }
           ]
         }
-      ],
-      "packageJsons": [
-        "./node_modules/pkg0/package.json",
-        "./node_modules/pkg2/package.json",
-        "./node_modules/pkg3/package.json"
       ]
     }
   },
