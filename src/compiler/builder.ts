@@ -56,7 +56,9 @@ import {
     getOptionsNameMap,
     getOwnKeys,
     getRelativePathFromDirectory,
-    getResolvedFileNameForModuleNameToDirectorySet,
+    GetResolutionWithResolvedFileName,
+    getResolvedModuleOfResolution,
+    getResolvedTypeReferenceDirectiveOfResolution,
     getTsBuildInfoEmitOutputFilePath,
     handleNoEmitOptions,
     HostForComputeHash,
@@ -90,6 +92,8 @@ import {
     ReadBuildProgramHost,
     ReadonlyCollection,
     ResolutionMode,
+    ResolutionWithFailedLookupLocations,
+    ResolutionWithResolvedFileName,
     ResolvedModuleFull,
     ResolvedModuleWithFailedLookupLocations,
     ResolvedProjectReference,
@@ -104,6 +108,7 @@ import {
     sourceFileMayBeEmitted,
     SourceMapEmitResult,
     toPath,
+    toPerDirectoryResolution,
     tryAddToSet,
     WriteFileCallback,
     WriteFileCallbackData,
@@ -1472,8 +1477,8 @@ function getCacheResolutions(state: BuilderProgramState, getCanonicalFileName: G
     const dirToPackageJsonMap = new Map<Path, string>();
     let perDirPackageJsonMap: Map<Path, string> | undefined;
     state.program!.getSourceFiles().forEach(f => {
-        modules = toPerDirectoryCache(state, getCanonicalFileName!, modules, f, f.resolvedModules, moduleNameToDirectoryMap);
-        typeRefs = toPerDirectoryCache(state, getCanonicalFileName!, typeRefs, f, f.resolvedTypeReferenceDirectiveNames);
+        modules = toPerDirectoryCache(state, getCanonicalFileName!, modules, getResolvedModuleOfResolution, f, f.resolvedModules, moduleNameToDirectoryMap);
+        typeRefs = toPerDirectoryCache(state, getCanonicalFileName!, typeRefs, getResolvedTypeReferenceDirectiveOfResolution, f, f.resolvedTypeReferenceDirectiveNames);
         if (f.packageJsonScope) {
             const dirPath = getDirectoryPath(f.resolvedPath);
             if (!dirToPackageJsonMap?.has(dirPath)) {
@@ -1494,7 +1499,7 @@ function getCacheResolutions(state: BuilderProgramState, getCanonicalFileName: G
     if (automaticTypeDirectiveNames.length) {
         const currentDirectory = state.program!.getCurrentDirectory();
         const containingPath = toPath(state.program!.getAutomaticTypeDirectiveContainingFile(), currentDirectory, getCanonicalFileName);
-        typeRefs = toPerDirectoryCache(state, getCanonicalFileName, typeRefs, containingPath, state.program!.getAutomaticTypeDirectiveResolutions());
+        typeRefs = toPerDirectoryCache(state, getCanonicalFileName, typeRefs, getResolvedTypeReferenceDirectiveOfResolution, containingPath, state.program!.getAutomaticTypeDirectiveResolutions());
     }
     return state.cacheResolutions = {
         modules,
@@ -1506,70 +1511,32 @@ function getCacheResolutions(state: BuilderProgramState, getCanonicalFileName: G
     };
 }
 
-function toPerDirectoryCache(
+function toPerDirectoryCache<T extends ResolutionWithFailedLookupLocations, R extends ResolutionWithResolvedFileName>(
     state: BuilderProgramState,
     getCanonicalFileName: GetCanonicalFileName,
-    cacheWithRedirects: CacheWithRedirects<Path, ModeAwareCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations>> | undefined,
-    fOrPath: SourceFile | Path,
-    cache: ModeAwareCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations> | undefined,
-): CacheWithRedirects<Path, ModeAwareCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations>> | undefined;
-function toPerDirectoryCache(
-    state: BuilderProgramState,
-    getCanonicalFileName: GetCanonicalFileName,
-    cacheWithRedirects: CacheWithRedirects<Path, ModeAwareCache<ResolvedModuleWithFailedLookupLocations>> | undefined,
-    fOrPath: SourceFile | Path,
-    cache: ModeAwareCache<ResolvedModuleWithFailedLookupLocations> | undefined,
-    moduleNameToDirectoryMap: CacheWithRedirects<ModeAwareCacheKey, Map<Path, ResolvedModuleWithFailedLookupLocations>>,
-): CacheWithRedirects<Path, ModeAwareCache<ResolvedModuleWithFailedLookupLocations>> | undefined;
-function toPerDirectoryCache<T extends ResolvedModuleWithFailedLookupLocations | ResolvedTypeReferenceDirectiveWithFailedLookupLocations>(
-    state: BuilderProgramState,
-    getCanonicalFileName: GetCanonicalFileName,
-    cacheWithRedirects: CacheWithRedirects<Path, ModeAwareCache<T>> | undefined,
-    fOrPath: SourceFile | Path,
-    cache: ModeAwareCache<T> | undefined,
+    perDirCache: CacheWithRedirects<Path, ModeAwareCache<T>> | undefined,
+    getResolutionWithResolvedFileName: GetResolutionWithResolvedFileName<T, R>,
+    sourceFileOrPath: SourceFile | Path,
+    fileCacheFromProgram: ModeAwareCache<T> | undefined,
     moduleNameToDirectoryMap?: CacheWithRedirects<ModeAwareCacheKey, Map<Path, ResolvedModuleWithFailedLookupLocations>> | undefined,
 ): CacheWithRedirects<Path, ModeAwareCache<T>> | undefined {
-    if (!cache?.size()) return cacheWithRedirects;
-    let dirPath: Path, redirectedReference: ResolvedProjectReference | undefined;
-    if (!isString(fOrPath)) {
-        redirectedReference = state.program!.getRedirectReferenceForResolution(fOrPath);
-        dirPath = getDirectoryPath(fOrPath.path);
-    }
-    else {
-        dirPath = getDirectoryPath(fOrPath);
-    }
-    let perDirResolutionCache = cacheWithRedirects?.getMapOfCacheRedirects(redirectedReference);
-    let dirCache = perDirResolutionCache?.get(dirPath);
-    cache.forEach((resolution, name, mode) => {
-        if (!(resolution as ResolvedModuleWithFailedLookupLocations).resolvedModule?.resolvedFileName && !(resolution as ResolvedTypeReferenceDirectiveWithFailedLookupLocations).resolvedTypeReferenceDirective?.resolvedFileName) return;
-        if (dirCache?.has(name, mode)) return;
-        // If there was already external module resolution that is same, set for child directory, dont set resolution for this directory
-        if (moduleNameToDirectoryMap &&
-            !isExternalModuleNameRelative(name) &&
-            moduleNameToDirectoryMap.getMapOfCacheRedirects(redirectedReference)?.get(createModeAwareCacheKey(name, mode))?.get(dirPath)) {
-            return;
-        }
-        if (!dirCache) {
-            perDirResolutionCache ??= (cacheWithRedirects ??= createCacheWithRedirects(state.compilerOptions)).getOrCreateMapOfCacheRedirects(redirectedReference);
-            perDirResolutionCache.set(dirPath, dirCache = createModeAwareCache());
-        }
-        dirCache.set(name, mode, resolution);
-        if (!moduleNameToDirectoryMap || isExternalModuleNameRelative(name)) return;
-        // put result in per-module name cache and delete everything that is not needed
-        const actualModuleNameToDirectoryMap = moduleNameToDirectoryMap.getOrCreateMapOfCacheRedirects(redirectedReference);
-        const key = createModeAwareCacheKey(name, mode);
-        let directoryPathMap = actualModuleNameToDirectoryMap.get(key);
-        if (!directoryPathMap) actualModuleNameToDirectoryMap.set(key, directoryPathMap = new Map());
-        moduleNameToDirectorySet(
-            directoryPathMap,
-            dirPath,
-            resolution as ResolvedModuleWithFailedLookupLocations,
-            getResolvedFileNameForModuleNameToDirectorySet,
-            dir => toPath(dir, state.program!.getCurrentDirectory(), getCanonicalFileName),
-            ancestorPath => perDirResolutionCache?.get(ancestorPath)?.delete(name, mode)
-        );
-    });
-    return cacheWithRedirects;
+    return toPerDirectoryResolution(
+        state.program!,
+        fileCacheFromProgram,
+        sourceFileOrPath,
+        perDirCache,
+        moduleNameToDirectoryMap,
+        noop,
+        (r, name, mode, redirectedReference, dirPath) =>
+            // If this is not resolved, dont put in per dir Cache
+            !getResolutionWithResolvedFileName(r)?.resolvedFileName ||
+            // If there was already external module resolution that is same, set for child directory, dont set resolution for this directory
+            (moduleNameToDirectoryMap &&
+                !isExternalModuleNameRelative(name) &&
+                moduleNameToDirectoryMap.getMapOfCacheRedirects(redirectedReference)?.get(createModeAwareCacheKey(name, mode))?.get(dirPath)),
+        dir => toPath(dir, state.program!.getCurrentDirectory(), getCanonicalFileName),
+        (ancestorPath, name, mode, perDirResolutionCache) => perDirResolutionCache?.get(ancestorPath)?.delete(name, mode),
+    );
 }
 
 /** @internal */
