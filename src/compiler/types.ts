@@ -11,6 +11,7 @@ import {
     OptionsNameMap,
     PackageJsonInfo,
     PackageJsonInfoCache,
+    PackageJsonScope,
     Pattern,
     ProgramBuildInfo,
     Push,
@@ -6980,7 +6981,7 @@ export interface OldBuildInfoProgram {
     getCompilerOptions(): CompilerOptions;
     getResolvedModule(dirPath: Path, name: string, mode: ResolutionMode, redirectedReference: ResolvedProjectReference | undefined): ResolvedModuleWithFailedLookupLocations | undefined;
     getResolvedTypeReferenceDirective(dirPath: Path, name: string, mode: ResolutionMode, redirectedReference: ResolvedProjectReference | undefined): ResolvedTypeReferenceDirectiveWithFailedLookupLocations | undefined;
-    getPackageJsonPath(dirPath: string): string | undefined;
+    getPackageJsonScope(dirPath: Path): PackageJsonScope | undefined;
 }
 
 /** @internal */

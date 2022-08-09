@@ -681,7 +681,6 @@ export function getAutomaticTypeDirectiveNames(options: CompilerOptions, host: M
 }
 
 export interface TypeReferenceDirectiveResolutionCache extends PerDirectoryResolutionCache<ResolvedTypeReferenceDirectiveWithFailedLookupLocations>, PackageJsonInfoCache {
-    /** @internal */ clearAllExceptPackageJsonInfoCache(): void;
 }
 
 /** @internal */
@@ -719,7 +718,6 @@ export interface PerDirectoryResolutionCache<T> {
 
 export interface ModuleResolutionCache extends PerDirectoryResolutionCache<ResolvedModuleWithFailedLookupLocations>, NonRelativeModuleNameResolutionCache, PackageJsonInfoCache {
     getPackageJsonInfoCache(): PackageJsonInfoCache;
-    /** @internal */ clearAllExceptPackageJsonInfoCache(): void;
 }
 
 /**
@@ -731,12 +729,32 @@ export interface NonRelativeModuleNameResolutionCache extends PackageJsonInfoCac
     getOrCreateCacheForModuleName(nonRelativeModuleName: string, mode: ResolutionMode, redirectedReference?: ResolvedProjectReference): PerModuleNameCache;
 }
 
+/** @internal */
+export interface PackageJsonScope {
+    info: PackageJsonInfo | undefined;
+    failedLookupLocations?: string[];
+    affectingLocations?: string[];
+}
+/** @internal */
+export function getPackageJsonLocationFromScope(scope: PackageJsonScope) {
+    return lastOrUndefined(scope.affectingLocations);
+}
+
+/** @internal */
+export interface OldPackageJsonInfoCache {
+    getPackageJsonScope(dir: Path): PackageJsonScope | undefined;
+}
+
 export interface PackageJsonInfoCache {
     /** @internal */ getPackageJsonInfo(packageJsonPath: string): PackageJsonInfo | boolean | undefined;
     /** @internal */ setPackageJsonInfo(packageJsonPath: string, info: PackageJsonInfo | boolean): void;
     /** @internal */ entries(): [Path, PackageJsonInfo | boolean][];
     /** @internal */ getInternalMap(): Map<Path, PackageJsonInfo | boolean> | undefined;
+    /** @internal */ setInternalMap(value: Map<Path, PackageJsonInfo | boolean> | undefined): void;
     /** @internal */ clone(): PackageJsonInfoCache;
+    /** @internal */ getPackageJsonScope(dir: string): PackageJsonScope | undefined;
+    /** @internal */ setPackageJsonScope(dir: string, scope: PackageJsonScope): void;
+    /** @internal */ setOldPackageJsonScopeCache(cache: OldPackageJsonInfoCache | undefined): void;
     clear(): void;
 }
 
@@ -861,25 +879,54 @@ export function createCacheWithRedirects<K, V>(ownOptions: CompilerOptions | und
 }
 
 function createPackageJsonInfoCache(currentDirectory: string, getCanonicalFileName: (s: string) => string, cache?: Map<Path, PackageJsonInfo | boolean>): PackageJsonInfoCache {
-    return { getPackageJsonInfo, setPackageJsonInfo, clear, entries, getInternalMap, clone };
+    const dirToPackageJsonScope = new Map<Path, PackageJsonScope>();
+    let oldPackageJsonInfoCache: OldPackageJsonInfoCache | undefined;
+    return {
+        getPackageJsonInfo,
+        setPackageJsonInfo,
+        clear,
+        entries,
+        getInternalMap: () => cache,
+        setInternalMap: value => cache = value,
+        clone,
+        getPackageJsonScope,
+        setPackageJsonScope,
+        setOldPackageJsonScopeCache: cache => oldPackageJsonInfoCache = cache,
+    };
     function getPackageJsonInfo(packageJsonPath: string) {
-        return cache?.get(toPath(packageJsonPath, currentDirectory, getCanonicalFileName));
+        return cache?.get(toPathHelper(packageJsonPath));
     }
     function setPackageJsonInfo(packageJsonPath: string, info: PackageJsonInfo | boolean) {
-        (cache ||= new Map()).set(toPath(packageJsonPath, currentDirectory, getCanonicalFileName), info);
+        (cache ||= new Map()).set(toPathHelper(packageJsonPath), info);
     }
     function clear() {
+        oldPackageJsonInfoCache = undefined;
         cache = undefined;
+        dirToPackageJsonScope.clear();
     }
     function entries() {
         const iter = cache?.entries();
         return iter ? arrayFrom(iter) : [];
     }
-    function getInternalMap() {
-        return cache;
-    }
     function clone() {
         return createPackageJsonInfoCache(currentDirectory, getCanonicalFileName, cache && new Map(cache));
+    }
+    function getPackageJsonScope(dir: string) {
+        const dirPath = toPathHelper(dir);
+        return dirToPackageJsonScope.get(dirPath) || oldPackageJsonInfoCache?.getPackageJsonScope(dirPath);
+    }
+    function setPackageJsonScope(dir: string, scope: PackageJsonScope) {
+        moduleNameToDirectorySet(
+            dirToPackageJsonScope,
+            toPathHelper(dir),
+            scope,
+            getPackageJsonLocationFromScope,
+            toPathHelper,
+            noop,
+        );
+    }
+    function toPathHelper(file: string) {
+        return toPath(file, currentDirectory, getCanonicalFileName);
     }
 }
 
@@ -1093,19 +1140,14 @@ export function createModuleResolutionCache(
         clear,
         update,
         getPackageJsonInfoCache: () => packageJsonInfoCache,
-        clearAllExceptPackageJsonInfoCache,
         setOldResolutionCache,
     };
 
     function clear() {
-        clearAllExceptPackageJsonInfoCache();
-        packageJsonInfoCache.clear();
-    }
-
-    function clearAllExceptPackageJsonInfoCache() {
         oldResolutionCache = undefined;
         perDirectoryResolutionCache.clear();
         moduleNameToDirectoryMap.clear();
+        packageJsonInfoCache.clear();
     }
 
     function update(options: CompilerOptions) {
@@ -1184,16 +1226,11 @@ export function createTypeReferenceDirectiveResolutionCache(
         ...packageJsonInfoCache,
         ...perDirectoryResolutionCache,
         clear,
-        clearAllExceptPackageJsonInfoCache,
     };
 
     function clear() {
-        clearAllExceptPackageJsonInfoCache();
-        packageJsonInfoCache!.clear();
-    }
-
-    function clearAllExceptPackageJsonInfoCache() {
         perDirectoryResolutionCache.clear();
+        packageJsonInfoCache!.clear();
     }
 }
 
@@ -2070,23 +2107,53 @@ export interface PackageJsonInfoContents {
     /** false: resolved to nothing. undefined: not yet resolved */
     resolvedEntrypoints: string[] | false | undefined;
 }
+/** @internal */
+export function getPackageScope(
+    dir: string,
+    packageJsonInfoCache: PackageJsonInfoCache | undefined,
+    host: ModuleResolutionHost,
+    options: CompilerOptions,
+): PackageJsonScope {
+    const state = getTemporaryModuleResolutionState(packageJsonInfoCache, host, options);
+    const failedLookupLocations: string[] = [];
+    const affectingLocations: string[] = [];
+    state.failedLookupLocations = failedLookupLocations;
+    state.affectingLocations = affectingLocations;
+    const result: PackageJsonScope = forEachAncestorDirectory(dir, directory => {
+        const fromCache = state.packageJsonInfoCache?.getPackageJsonScope(directory);
+        if (fromCache) {
+            const { host, traceEnabled } = state;
+            if (traceEnabled) {
+                trace(
+                    host,
+                    fromCache.info ?
+                        Diagnostics.Directory_0_resolves_to_1_scope_according_to_cache :
+                        Diagnostics.Directory_0_has_no_containing_package_json_scope_according_to_cache,
+                    directory,
+                    getPackageJsonLocationFromScope(fromCache)
+                );
+            }
+            return fromCache;
+        }
+
+        const info = getPackageJsonInfo(directory, /*onlyRecordFailures*/ false, state);
+        if (info) return { info };
+    }) || { info: undefined };
+    result.failedLookupLocations = updateResolutionField(result.failedLookupLocations, !options.cacheResolutions || !result.info ? failedLookupLocations : undefined);
+    result.affectingLocations = updateResolutionField(result.affectingLocations, affectingLocations);
+    packageJsonInfoCache?.setPackageJsonScope(dir, result);
+    return result;
+}
 
 /**
  * A function for locating the package.json scope for a given path
  *
  * @internal
  */
- export function getPackageScopeForPath(fileName: string, state: ModuleResolutionState): PackageJsonInfo | undefined {
-    const parts = getPathComponents(fileName);
-    parts.pop();
-    while (parts.length > 0) {
-        const pkg = getPackageJsonInfo(getPathFromPathComponents(parts), /*onlyRecordFailures*/ false, state);
-        if (pkg) {
-            return pkg;
-        }
-        parts.pop();
-    }
-    return undefined;
+export function getPackageScopeForPath(dir: string, state: ModuleResolutionState): PackageJsonInfo | undefined {
+    return forEachAncestorDirectory(dir, directory =>
+        getPackageJsonInfo(directory, /*onlyRecordFailures*/ false, state)
+    );
 }
 
 /** @internal */
@@ -2237,7 +2304,7 @@ function noKeyStartsWithDot(obj: MapLike<unknown>) {
 }
 
 function loadModuleFromSelfNameReference(extensions: Extensions, moduleName: string, directory: string, state: ModuleResolutionState, cache: ModuleResolutionCache | undefined, redirectedReference: ResolvedProjectReference | undefined): SearchResult<Resolved> {
-    const directoryPath = getNormalizedAbsolutePath(combinePaths(directory, "dummy"), state.host.getCurrentDirectory?.());
+    const directoryPath = getNormalizedAbsolutePath(directory, state.host.getCurrentDirectory?.());
     const scope = getPackageScopeForPath(directoryPath, state);
     if (!scope || !scope.contents.packageJsonContent.exports) {
         return undefined;
@@ -2298,7 +2365,7 @@ function loadModuleFromImports(extensions: Extensions, moduleName: string, direc
         }
         return toSearchResult(/*value*/ undefined);
     }
-    const directoryPath = getNormalizedAbsolutePath(combinePaths(directory, "dummy"), state.host.getCurrentDirectory?.());
+    const directoryPath = getNormalizedAbsolutePath(directory, state.host.getCurrentDirectory?.());
     const scope = getPackageScopeForPath(directoryPath, state);
     if (!scope) {
         if (state.traceEnabled) {
