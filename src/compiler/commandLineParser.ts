@@ -16,7 +16,7 @@ import {
     MapLike, ModuleDetectionKind, ModuleKind, ModuleResolutionKind, NewLineKind, Node, NodeArray,
     nodeModuleNameResolver, normalizePath, normalizeSlashes, NumericLiteral, ObjectLiteralExpression, ParseConfigHost,
     ParsedCommandLine, parseJsonText, Path, PollingWatchKind, PrefixUnaryExpression, ProjectReference, PropertyName,
-    Push, removeTrailingDirectorySeparator, returnTrue, ScriptTarget, startsWith, StringLiteral, SyntaxKind, sys,
+    Push, removeTrailingDirectorySeparator, returnTrue, ScriptTarget, startsWith, stringContains, StringLiteral, SyntaxKind, sys,
     toFileNameLowerCase, toPath, tracing, trimString, TsConfigOnlyOption, TsConfigSourceFile, TypeAcquisition,
     unescapeLeadingUnderscores, WatchDirectoryFlags, WatchDirectoryKind, WatchFileKind, WatchOptions,
 } from "./_namespaces/ts";
@@ -1559,10 +1559,13 @@ export function parseCustomTypeOption(opt: CommandLineOptionOfCustomType, value:
 }
 
 /** @internal */
-export function parseListTypeOption(opt: CommandLineOptionOfListType, value = "", errors: Push<Diagnostic>): (string | number)[] | undefined {
+export function parseListTypeOption(opt: CommandLineOptionOfListType, value = "", errors: Push<Diagnostic>): string | (string | number)[] | undefined {
     value = trimString(value);
     if (startsWith(value, "-")) {
         return undefined;
+    }
+    if (opt.type === "string | list" && !stringContains(value, ",")) {
+        return validateJsonOptionValue(opt, value, errors);
     }
     if (value === "") {
         return [];
@@ -1573,6 +1576,10 @@ export function parseListTypeOption(opt: CommandLineOptionOfListType, value = ""
             return mapDefined(values, v => validateJsonOptionValue(opt.element, parseInt(v), errors));
         case "string":
             return mapDefined(values, v => validateJsonOptionValue(opt.element, v || "", errors));
+        case "boolean":
+        case "object":
+        case "string | list":
+            return Debug.fail(`List of ${opt.element.type} is not yet supported.`);
         default:
             return mapDefined(values, v => parseCustomTypeOption(opt.element as CommandLineOptionOfCustomType, v, errors));
     }
@@ -1744,6 +1751,7 @@ function parseOptionValue(
                     options[opt.name] = validateJsonOptionValue(opt, args[i] || "", errors);
                     i++;
                     break;
+                case "string | list":
                 case "list":
                     const result = parseListTypeOption(opt, args[i], errors);
                     options[opt.name] = result || [];
@@ -2255,7 +2263,7 @@ export function convertToObjectWorker(
                 if (!isDoubleQuotedString(valueExpression)) {
                     errors.push(createDiagnosticForNodeInSourceFile(sourceFile, valueExpression, Diagnostics.String_literal_with_double_quotes_expected));
                 }
-                reportInvalidOptionValue(option && (isString(option.type) && option.type !== "string"));
+                reportInvalidOptionValue(option && isString(option.type) && option.type !== "string" && option.type !== "string | list");
                 const text = (valueExpression as StringLiteral).text;
                 if (option && !isString(option.type)) {
                     const customOption = option as CommandLineOptionOfCustomType;
@@ -2284,7 +2292,7 @@ export function convertToObjectWorker(
                 return validateValue(-Number(((valueExpression as PrefixUnaryExpression).operand as NumericLiteral).text));
 
             case SyntaxKind.ObjectLiteralExpression:
-                reportInvalidOptionValue(option && option.type !== "object");
+                reportInvalidOptionValue(option && option.type !== "object" && option.type !== "string | list");
                 const objectLiteralExpression = valueExpression as ObjectLiteralExpression;
 
                 // Currently having element option declaration in the tsconfig with type "object"
@@ -2356,6 +2364,9 @@ function isCompilerOptionsValue(option: CommandLineOption | undefined, value: an
         if (isNullOrUndefined(value)) return true; // All options are undefinable/nullable
         if (option.type === "list") {
             return isArray(value);
+        }
+        if (option.type === "string | list") {
+            return typeof value === "string" || isArray(value);
         }
         const expectedType = isString(option.type) ? option.type : "string";
         return typeof value === expectedType;
@@ -2461,15 +2472,18 @@ function matchesSpecs(path: string, includeSpecs: readonly string[] | undefined,
 }
 
 function getCustomTypeMapOfCommandLineOption(optionDefinition: CommandLineOption): ESMap<string, string | number> | undefined {
-    if (optionDefinition.type === "string" || optionDefinition.type === "number" || optionDefinition.type === "boolean" || optionDefinition.type === "object") {
-        // this is of a type CommandLineOptionOfPrimitiveType
-        return undefined;
-    }
-    else if (optionDefinition.type === "list") {
-        return getCustomTypeMapOfCommandLineOption(optionDefinition.element);
-    }
-    else {
-        return optionDefinition.type;
+    switch (optionDefinition.type) {
+        case "string":
+        case "number":
+        case "boolean":
+        case "object":
+        case "string | list":
+            // this is of a type CommandLineOptionOfPrimitiveType
+            return undefined;
+        case "list":
+            return getCustomTypeMapOfCommandLineOption(optionDefinition.element);
+        default:
+            return optionDefinition.type;
     }
 }
 
@@ -3316,11 +3330,10 @@ function convertOptionsFromJson(optionsNameMap: ESMap<string, CommandLineOption>
 /** @internal */
 export function convertJsonOption(opt: CommandLineOption, value: any, basePath: string, errors: Push<Diagnostic>): CompilerOptionsValue {
     if (isCompilerOptionsValue(opt, value)) {
-        const optType = opt.type;
-        if (optType === "list" && isArray(value)) {
+        if ((opt.type === "list" || opt.type === "string | list") && isArray(value)) {
             return convertJsonOptionOfListType(opt , value, basePath, errors);
         }
-        else if (!isString(optType)) {
+        else if (!isString(opt.type)) {
             return convertJsonOptionOfCustomType(opt as CommandLineOptionOfCustomType, value as string, errors);
         }
         const validatedValue = validateJsonOptionValue(opt, value, errors);
@@ -3762,6 +3775,7 @@ function getOptionValueWithEmptyStrings(value: any, option: CommandLineOption): 
         case "boolean":
             return typeof value === "boolean" ? value : "";
         case "list":
+        case "string | list":
             const elementType = option.element;
             return isArray(value) ? value.map(v => getOptionValueWithEmptyStrings(v, elementType)) : "";
         default:
@@ -3781,6 +3795,7 @@ function getDefaultValueForOption(option: CommandLineOption) {
         case "boolean":
             return true;
         case "string":
+        case "string | list":
             const defaultValue = option.defaultValueDescription;
             return option.isFilePath ? `./${defaultValue && typeof defaultValue === "string" ? defaultValue : ""}` : "";
         case "list":
