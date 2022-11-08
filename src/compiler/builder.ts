@@ -15,6 +15,7 @@ import {
     returnFalse, returnUndefined, SemanticDiagnosticsBuilderProgram, Set, skipTypeChecking, some, SourceFile,
     sourceFileMayBeEmitted, SourceMapEmitResult, toPath, tryAddToSet, WriteFileCallback, WriteFileCallbackData,
 } from "./_namespaces/ts";
+import * as performance from "./_namespaces/ts.performance";
 
 /** @internal */
 export interface ReusableDiagnostic extends ReusableDiagnosticRelatedInformation {
@@ -910,10 +911,18 @@ export function isProgramBundleEmitBuildInfo(info: ProgramBuildInfo): info is Pr
     return !!outFile(info.options || {});
 }
 
+function getBuildInfo(state: BuilderProgramState, getCanonicalFileName: GetCanonicalFileName, bundle: BundleBuildInfo | undefined) {
+    performance.mark("beforeGetProgramBuildInfo");
+    const result = getBuildInfoWorker(state, getCanonicalFileName, bundle);
+    performance.mark("afterGetProgramBuildInfo");
+    performance.measure("BuildInfo generation", "beforeGetProgramBuildInfo", "afterGetProgramBuildInfo");
+    return result;
+}
+
 /**
  * Gets the program information to be emitted in buildInfo so that we can use it to create new program
  */
-function getBuildInfo(state: BuilderProgramState, getCanonicalFileName: GetCanonicalFileName, bundle: BundleBuildInfo | undefined): BuildInfo {
+function getBuildInfoWorker(state: BuilderProgramState, getCanonicalFileName: GetCanonicalFileName, bundle: BundleBuildInfo | undefined): BuildInfo {
     const currentDirectory = Debug.checkDefined(state.program).getCurrentDirectory();
     const buildInfoDirectory = getDirectoryPath(getNormalizedAbsolutePath(getTsBuildInfoEmitOutputFilePath(state.compilerOptions)!, currentDirectory));
     // Convert the file name to Path here if we set the fileName instead to optimize multiple d.ts file emits and having to compute Canonical path

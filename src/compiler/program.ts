@@ -2147,6 +2147,7 @@ export function createProgram(rootNamesOrOptions: readonly string[] | CreateProg
             redirectTargetsMap,
             getFileIncludeReasons: program.getFileIncludeReasons,
             createHash: maybeBind(host, host.createHash),
+            buildInfoCallbacks: host.buildInfoCallbacks,
         };
     }
 

@@ -138,9 +138,9 @@ export interface SolutionBuilderHostBase<T extends BuilderProgram> extends Progr
 
     // TODO: To do better with watch mode and normal build mode api that creates program and emits files
     // This currently helps enable --diagnostics and --extendedDiagnostics
-    afterProgramEmitAndDiagnostics?(program: T): void;
-    /** @internal */ beforeEmitBundle?(config: ParsedCommandLine): void;
-    /** @internal */ afterEmitBundle?(config: ParsedCommandLine): void;
+    afterProgramEmitAndDiagnostics?(program: T, host?: CompilerHost): void;
+    /** @internal */ beforeEmitBundle?(config: ParsedCommandLine, host: CompilerHost): void;
+    /** @internal */ afterEmitBundle?(config: ParsedCommandLine, host: CompilerHost): void;
 
     // For testing
     /** @internal */ now?(): Date;
@@ -350,7 +350,7 @@ function createSolutionBuilderState<T extends BuilderProgram>(watch: boolean, ho
         compilerHost.resolveTypeReferenceDirectives = (typeReferenceDirectiveNames, containingFile, redirectedReference, _options, containingFileMode) =>
             loadWithTypeDirectiveCache<ResolvedTypeReferenceDirective>(Debug.checkEachDefined(typeReferenceDirectiveNames), containingFile, redirectedReference, containingFileMode, loader);
     }
-    compilerHost.getBuildInfo = (fileName, configFilePath) => getBuildInfo(state, fileName, toResolvedConfigFilePath(state, configFilePath as ResolvedConfigFileName), /*modifiedTime*/ undefined);
+    compilerHost.getBuildInfo = (fileName, options) => getBuildInfo(state, fileName, options, toResolvedConfigFilePath(state, options.configFilePath as ResolvedConfigFileName), /*modifiedTime*/ undefined);
 
     const { watchFile, watchDirectory, writeLog } = createWatchFactory<ResolvedConfigFileName>(hostWithWatch, options);
 
@@ -1011,6 +1011,8 @@ function createBuildOrUpdateInvalidedProject<T extends BuilderProgram>(
         // Don't emit .d.ts if there are decl file errors
         if (declDiagnostics) {
             program.restoreEmitState(saved);
+            // Revert buildInfo write size
+            state.compilerHost.buildInfoCallbacks?.revertLastWrite();
             ({ buildResult, step } = buildErrors(
                 state,
                 projectPath,
@@ -1028,6 +1030,7 @@ function createBuildOrUpdateInvalidedProject<T extends BuilderProgram>(
 
         // Actual Emit
         const { host, compilerHost } = state;
+        compilerHost.buildInfoCallbacks?.clearLastWrite();
         const resultFlags = program.hasChangedEmitSignature?.() ? BuildResultFlags.None : BuildResultFlags.DeclarationOutputUnchanged;
         const emitterDiagnostics = createDiagnosticCollection();
         const emittedOutputs = new Map<Path, string>();
@@ -1130,7 +1133,7 @@ function createBuildOrUpdateInvalidedProject<T extends BuilderProgram>(
         // Update js, and source map
         const { compilerHost } = state;
         state.projectCompilerOptions = config.options;
-        state.host.beforeEmitBundle?.(config);
+        state.host.beforeEmitBundle?.(config, compilerHost);
         const outputFiles = emitUsingBuildInfo(
             config,
             compilerHost,
@@ -1411,12 +1414,12 @@ function afterProgramDone<T extends BuilderProgram>(
     if (program) {
         if (state.write) listFiles(program, state.write);
         if (state.host.afterProgramEmitAndDiagnostics) {
-            state.host.afterProgramEmitAndDiagnostics(program);
+            state.host.afterProgramEmitAndDiagnostics(program, state.compilerHost);
         }
         program.releaseProgram();
     }
     else if (state.host.afterEmitBundle) {
-        state.host.afterEmitBundle(config);
+        state.host.afterEmitBundle(config, state.compilerHost);
     }
     state.projectCompilerOptions = state.baseCompilerOptions;
 }
@@ -1539,14 +1542,18 @@ function getBuildInfoCacheEntry(state: SolutionBuilderState, buildInfoPath: stri
     return existing?.path === path ? existing : undefined;
 }
 
-function getBuildInfo(state: SolutionBuilderState, buildInfoPath: string, resolvedConfigPath: ResolvedConfigFilePath, modifiedTime: Date | undefined): BuildInfo | undefined {
+function getBuildInfo(state: SolutionBuilderState, buildInfoPath: string, options: CompilerOptions, resolvedConfigPath: ResolvedConfigFilePath, modifiedTime: Date | undefined): BuildInfo | undefined {
     const path = toPath(state, buildInfoPath);
     const existing = state.buildInfoCache.get(resolvedConfigPath);
     if (existing !== undefined && existing.path === path) {
         return existing.buildInfo || undefined;
     }
+    const host = (modifiedTime ? state.host : state.compilerHost);
+    host.buildInfoCallbacks?.onReadStart(options);
     const value = state.readFileWithCache(buildInfoPath);
+    host.buildInfoCallbacks?.onReadText(value);
     const buildInfo = value ? ts.getBuildInfo(buildInfoPath, value) : undefined;
+    host.buildInfoCallbacks?.onReadEnd();
     state.buildInfoCache.set(resolvedConfigPath, { path, buildInfo: buildInfo || false, modifiedTime: modifiedTime || missingFileModifiedTime });
     return buildInfo;
 }
@@ -1636,7 +1643,7 @@ function getUpToDateStatusWorker(state: SolutionBuilderState, project: ParsedCom
             };
         }
 
-        const buildInfo = getBuildInfo(state, buildInfoPath, resolvedPath, buildInfoTime);
+        const buildInfo = getBuildInfo(state, buildInfoPath, project.options, resolvedPath, buildInfoTime);
         if (!buildInfo) {
             // Error reading buildInfo
             return {
