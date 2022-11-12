@@ -13,7 +13,7 @@ import {
     isCaseClause, isClassLike, isConstructorDeclaration, isDeclaration, isDeclarationWithTypeParameters,
     isElementAccessExpression, isExpression, isExpressionNode, isExpressionStatement, isFunctionBody,
     isFunctionExpression, isFunctionLike, isFunctionLikeDeclaration, isIdentifier, isInJSFile, isIterationStatement,
-    isJsxAttribute, isJsxElement, isJsxFragment, isJsxSelfClosingElement, isKeyword, isModuleBlock,
+    isJsxAttribute, isJsxElement, isJsxFragment, isJsxSelfClosingElement, isModuleBlock,
     isParenthesizedTypeNode, isPartOfTypeNode, isPrivateIdentifier, isPropertyAccessExpression, isPropertyDeclaration,
     isQualifiedName, isReturnStatement, isShorthandPropertyAssignment, isSourceFile, isStatement, isStatic,
     isStringLiteral, isSwitchStatement, isThis, isUnaryExpressionWithWrite, isUnionTypeNode, isVariableDeclaration,
@@ -24,7 +24,7 @@ import {
     ShorthandPropertyAssignment, SignatureKind, singleOrUndefined, skipParentheses, SourceFile, Statement,
     StringLiteral, suppressLeadingAndTrailingTrivia, Symbol, SymbolFlags, SyntaxKind, textChanges, TextRange, TextSpan,
     textSpanEnd, TryStatement, Type, TypeChecker, TypeElement, TypeFlags, TypeLiteralNode, TypeNode, TypeParameter,
-    TypeParameterDeclaration, VariableDeclaration, visitEachChild, visitNode, visitNodes, VisitResult,
+    TypeParameterDeclaration, VariableDeclaration, visitEachChild, visitNode, visitNodes, VisitResult, isStringAKeyword
 } from "../_namespaces/ts";
 import { refactorKindBeginsWith, registerRefactor } from "../_namespaces/ts.refactor";
 
@@ -1215,7 +1215,7 @@ function extractConstantInScope(
 
     // Make a unique name for the extracted variable
     const file = scope.getSourceFile();
-    const localNameText = isPropertyAccessExpression(node) && !isClassLike(scope) && !checker.resolveName(node.name.text, node, SymbolFlags.Value, /*excludeGlobals*/ false) && !isPrivateIdentifier(node.name) && !isKeyword(node.name.originalKeywordKind!)
+    const localNameText = isPropertyAccessExpression(node) && !isClassLike(scope) && !checker.resolveName(node.name.text, node, SymbolFlags.Value, /*excludeGlobals*/ false) && !isPrivateIdentifier(node.name) && !isStringAKeyword(node.name.text)
         ? node.name.text
         : getUniqueName(isClassLike(scope) ? "newProperty" : "newLocal", file);
     const isJS = isInJSFile(scope);

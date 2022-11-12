@@ -3741,11 +3741,6 @@ export function isStringAKeyword(name: string) {
 }
 
 /** @internal */
-export function isIdentifierANonContextualKeyword({ originalKeywordKind }: Identifier): boolean {
-    return !!originalKeywordKind && !isContextualKeyword(originalKeywordKind);
-}
-
-/** @internal */
 export function isTrivia(token: SyntaxKind): token is TriviaSyntaxKind {
     return SyntaxKind.FirstTriviaToken <= token && token <= SyntaxKind.LastTriviaToken;
 }
@@ -5113,7 +5108,7 @@ export function isThisInTypeQuery(node: Node): boolean {
 
 /** @internal */
 export function identifierIsThisKeyword(id: Identifier): boolean {
-    return id.originalKeywordKind === SyntaxKind.ThisKeyword;
+    return id.escapedText === "this";
 }
 
 /** @internal */

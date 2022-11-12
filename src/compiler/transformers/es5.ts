@@ -1,9 +1,9 @@
 import {
     Bundle,
-    chainBundle, EmitHint, Expression, getOriginalNodeId, Identifier, idText, isIdentifier, isPrivateIdentifier,
+    chainBundle, EmitHint, Expression, getOriginalNodeId, Identifier, isIdentifier, isPrivateIdentifier,
     isPropertyAccessExpression, isPropertyAssignment, JsxClosingElement, JsxEmit, JsxOpeningElement,
-    JsxSelfClosingElement, Node, nodeIsSynthesized, PropertyAccessExpression, PropertyAssignment, setTextRange,
-    SourceFile, stringToToken, SyntaxKind, TransformationContext,
+    JsxSelfClosingElement, Node, PropertyAccessExpression, PropertyAssignment, setTextRange,
+    SourceFile, stringToToken, SyntaxKind, TransformationContext
 } from "../_namespaces/ts";
 
 /**
@@ -120,7 +120,7 @@ export function transformES5(context: TransformationContext): (x: SourceFile | B
      * @param name An Identifier
      */
     function trySubstituteReservedName(name: Identifier) {
-        const token = name.originalKeywordKind || (nodeIsSynthesized(name) ? stringToToken(idText(name)) : undefined);
+        const token = stringToToken(name.escapedText as string);
         if (token !== undefined && token >= SyntaxKind.FirstReservedWord && token <= SyntaxKind.LastReservedWord) {
             return setTextRange(factory.createStringLiteralFromNode(name), name);
         }

@@ -1128,8 +1128,11 @@ function isModifierLike(node: Node): ModifierSyntaxKind | undefined {
     if (isModifier(node)) {
         return node.kind;
     }
-    if (isIdentifier(node) && node.originalKeywordKind && isModifierKind(node.originalKeywordKind)) {
-        return node.originalKeywordKind;
+    if (isIdentifier(node)) {
+        const keywordKind = stringToToken(node.text);
+        if (keywordKind && isModifierKind(keywordKind)) {
+            return keywordKind;
+        }
     }
     return undefined;
 }
@@ -4060,7 +4063,7 @@ function isFunctionLikeBodyKeyword(kind: SyntaxKind) {
 }
 
 function keywordForNode(node: Node): SyntaxKind {
-    return isIdentifier(node) ? node.originalKeywordKind || SyntaxKind.Unknown : node.kind;
+    return isIdentifier(node) ? stringToToken(node.text) ?? SyntaxKind.Unknown : node.kind;
 }
 
 function getContextualKeywords(
@@ -4164,7 +4167,7 @@ function tryGetObjectTypeDeclarationCompletionContainer(sourceFile: SourceFile, 
             }
             break;
        case SyntaxKind.Identifier: {
-            const originalKeywordKind = (location as Identifier).originalKeywordKind;
+            const originalKeywordKind = stringToToken((location as Identifier).text);
             if (originalKeywordKind && isKeyword(originalKeywordKind)) {
                 return undefined;
             }

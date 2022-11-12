@@ -17,7 +17,7 @@ import {
     isCallToHelper, isCaseBlock, isCaseClause, isCatchClause, isClassElement, isClassLike, isComputedPropertyName,
     isDefaultClause, isDestructuringAssignment, isExpression, isExpressionStatement, isForInitializer, isForStatement,
     isFunctionExpression, isFunctionLike, isHoistedFunction, isHoistedVariableStatement, isIdentifier,
-    isIdentifierANonContextualKeyword, isIfStatement, isInternalName, isIterationStatement, isLabeledStatement,
+    isIfStatement, isInternalName, isIterationStatement, isLabeledStatement,
     isModifier, isObjectLiteralElementLike, isOmittedExpression, isPackedArrayLiteral, isPrivateIdentifier,
     isPrologueDirective, isPropertyDeclaration, isPropertyName, isReturnStatement, isSpreadElement, isStatement,
     isStatic, isSuperProperty, isSwitchStatement, isTryStatement, isVariableDeclarationList, isVariableStatement,
@@ -33,7 +33,7 @@ import {
     SyntaxKind, TaggedTemplateExpression, takeWhile, TemplateExpression, TextRange, TokenFlags, TransformationContext,
     TransformFlags, tryCast, unescapeLeadingUnderscores, unwrapInnermostStatementOfLabel, VariableDeclaration,
     VariableDeclarationList, VariableStatement, visitEachChild, visitNode, visitNodes, visitParameterList, VisitResult,
-    VoidExpression, WhileStatement, YieldExpression, Bundle,
+    VoidExpression, WhileStatement, YieldExpression, Bundle, isStringANonContextualKeyword,
 } from "../_namespaces/ts";
 
 const enum ES2015SubstitutionFlags {
@@ -903,7 +903,7 @@ export function transformES2015(context: TransformationContext): (x: SourceFile 
     function transformClassBody(node: ClassExpression | ClassDeclaration, extendsClauseElement: ExpressionWithTypeArguments | undefined): Block {
         const statements: Statement[] = [];
         const name = factory.getInternalName(node);
-        const constructorLikeName = isIdentifierANonContextualKeyword(name) ? factory.getGeneratedNameForNode(name) : name;
+        const constructorLikeName = isStringANonContextualKeyword(idText(name)) ? factory.getGeneratedNameForNode(name) : name;
         startLexicalEnvironment();
         addExtendsHelperIfNeeded(statements, node, extendsClauseElement);
         addConstructor(statements, node, constructorLikeName, extendsClauseElement);

@@ -67,7 +67,7 @@ import {
     SemicolonClassElement, SetAccessorDeclaration, setEachParent, setEmitFlags, setParent, setTextRange,
     setTextRangePosEnd, setTextRangePosWidth, ShorthandPropertyAssignment, SignatureDeclarationBase, singleOrUndefined,
     skipOuterExpressions, skipParentheses, some, SourceFile, SourceMapSource, SpreadAssignment, SpreadElement,
-    startOnNewLine, startsWith, Statement, StringLiteral, StringLiteralLike, stringToToken, SuperExpression,
+    startOnNewLine, startsWith, Statement, StringLiteral, StringLiteralLike, SuperExpression,
     SwitchStatement, SyntaxKind, SyntaxList, SyntheticExpression, SyntheticReferenceExpression,
     TaggedTemplateExpression, TemplateExpression, TemplateHead, TemplateLiteral, TemplateLiteralLikeNode,
     TemplateLiteralToken, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, TemplateMiddle, TemplateSpan, TemplateTail,
@@ -941,21 +941,14 @@ export function createNodeFactory(flags: NodeFactoryFlags, baseFactory: BaseNode
     // Identifiers
     //
 
-    function createBaseIdentifier(text: string, originalKeywordKind: SyntaxKind | undefined) {
-        if (originalKeywordKind === undefined && text) {
-            originalKeywordKind = stringToToken(text);
-        }
-        if (originalKeywordKind === SyntaxKind.Identifier) {
-            originalKeywordKind = undefined;
-        }
+    function createBaseIdentifier(text: string) {
         const node = baseFactory.createBaseIdentifierNode(SyntaxKind.Identifier) as Mutable<Identifier>;
-        node.originalKeywordKind = originalKeywordKind;
         node.escapedText = escapeLeadingUnderscores(text);
         return node;
     }
 
     function createBaseGeneratedIdentifier(text: string, autoGenerateFlags: GeneratedIdentifierFlags, prefix: string | GeneratedNamePart | undefined, suffix: string | undefined) {
-        const node = createBaseIdentifier(text, /*originalKeywordKind*/ undefined) as Mutable<GeneratedIdentifier>;
+        const node = createBaseIdentifier(text) as Mutable<GeneratedIdentifier>;
         node.autoGenerateFlags = autoGenerateFlags;
         node.autoGenerateId = nextAutoGenerateId;
         node.autoGeneratePrefix = prefix;
@@ -966,12 +959,12 @@ export function createNodeFactory(flags: NodeFactoryFlags, baseFactory: BaseNode
 
     // @api
     function createIdentifier(text: string, typeArguments?: readonly (TypeNode | TypeParameterDeclaration)[], originalKeywordKind?: SyntaxKind, hasExtendedUnicodeEscape?: boolean): Identifier {
-        const node = createBaseIdentifier(text, originalKeywordKind);
+        const node = createBaseIdentifier(text);
         if (typeArguments) {
             // NOTE: we do not use `setChildren` here because typeArguments in an identifier do not contribute to transformations
             node.typeArguments = createNodeArray(typeArguments);
         }
-        if (node.originalKeywordKind === SyntaxKind.AwaitKeyword) {
+        if (originalKeywordKind === SyntaxKind.AwaitKeyword) {
             node.transformFlags |= TransformFlags.ContainsPossibleTopLevelAwait;
         }
         if (hasExtendedUnicodeEscape) {

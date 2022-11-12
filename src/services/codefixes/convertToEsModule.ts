@@ -14,7 +14,7 @@ import {
     mapAllOrFail, mapIterator, MethodDeclaration, Modifier, Node, NodeArray, NodeFlags, ObjectLiteralElementLike,
     ObjectLiteralExpression, PropertyAccessExpression, QuotePreference, rangeContainsRange, ReadonlyCollection,
     ScriptTarget, some, SourceFile, Statement, StringLiteralLike, SymbolFlags, SyntaxKind,
-    textChanges, TypeChecker, VariableStatement,
+    textChanges, TypeChecker, VariableStatement, stringToToken,
 } from "../_namespaces/ts";
 
 registerCodeFix({
@@ -96,8 +96,9 @@ type ExportRenames = ReadonlyMap<string, string>;
 function collectExportRenames(sourceFile: SourceFile, checker: TypeChecker, identifiers: Identifiers): ExportRenames {
     const res = new Map<string, string>();
     forEachExportReference(sourceFile, node => {
-        const { text, originalKeywordKind } = node.name;
-        if (!res.has(text) && (originalKeywordKind !== undefined && isNonContextualKeyword(originalKeywordKind)
+        const text = node.name.text;
+        const keywordKind = stringToToken(text);
+        if (!res.has(text) && (keywordKind !== undefined && isNonContextualKeyword(keywordKind)
             || checker.resolveName(text, node, SymbolFlags.Value, /*excludeGlobals*/ true))) {
             // Unconditionally add an underscore in case `text` is a keyword.
             res.set(text, makeUniqueName(`_${text}`, identifiers));
