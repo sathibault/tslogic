@@ -111,14 +111,14 @@ describe("unittests:: moduleResolution:: Node module resolution - relative paths
             const resolution = ts.nodeModuleNameResolver(moduleName, containingFile.name, {}, createModuleResolutionHost(hasDirectoryExists, containingFile, moduleFile));
             checkResolvedModule(resolution.resolvedModule, createResolvedModule(moduleFile.name));
 
-            const failedLookupLocations: string[] = [];
+            let failedLookupLocations: string[] | undefined;
             const dir = ts.getDirectoryPath(containingFileName);
             for (const e of autoExtensions) {
                 if (e === ext) {
                     break;
                 }
                 else {
-                    failedLookupLocations.push(ts.normalizePath(ts.getRootLength(moduleName) === 0 ? ts.combinePaths(dir, moduleName) : moduleName) + e);
+                    (failedLookupLocations ??= []).push(ts.normalizePath(ts.getRootLength(moduleName) === 0 ? ts.combinePaths(dir, moduleName) : moduleName) + e);
                 }
             }
 
@@ -154,7 +154,7 @@ describe("unittests:: moduleResolution:: Node module resolution - relative paths
             const resolution = ts.nodeModuleNameResolver(moduleName, containingFile.name, {}, createModuleResolutionHost(hasDirectoryExists, containingFile, packageJson, moduleFile));
             checkResolvedModule(resolution.resolvedModule, createResolvedModule(moduleFile.name));
             // expect three failed lookup location - attempt to load module as file with all supported extensions
-            assert.equal(resolution.failedLookupLocations.length, ts.supportedTSExtensions[0].length);
+            assert.equal(resolution.failedLookupLocations?.length, ts.supportedTSExtensions[0].length);
             assert.deepEqual(resolution.affectingLocations, [packageJsonFileName]);
         }
     }
@@ -952,15 +952,15 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                 const options: ts.CompilerOptions = { moduleResolution, baseUrl: "/root" };
                 {
                     const result = ts.resolveModuleName("folder2/file2", file1.name, options, host);
-                    checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(file2.name), []);
+                    checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(file2.name), /*expectedFailedLookupLocations*/ undefined);
                 }
                 {
                     const result = ts.resolveModuleName("./file3", file2.name, options, host);
-                    checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(file3.name), []);
+                    checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(file3.name), /*expectedFailedLookupLocations*/ undefined);
                 }
                 {
                     const result = ts.resolveModuleName("/root/folder1/file1", file2.name, options, host);
-                    checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(file1.name), []);
+                    checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(file1.name), /*expectedFailedLookupLocations*/ undefined);
                 }
             }
         }
@@ -1049,7 +1049,7 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                     ]
                 }
             };
-            check("folder1/file1", file1, []);
+            check("folder1/file1", file1, /*expectedFailedLookups*/ undefined);
             check("folder1/file2", file2, [
                 // first try the '*'
                 "/root/folder1/file2.ts",
@@ -1062,7 +1062,7 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                 "/root/folder1/file2/index.d.ts",
                 // then first attempt on 'generated/*' was successful
             ]);
-            check("/rooted/folder1/file2", file2, []);
+            check("/rooted/folder1/file2", file2, /*expectedFailedLookups*/ undefined);
             check("folder2/file3", file3, [
                 // first try '*'
                 "/root/folder2/file3.ts",
@@ -1160,7 +1160,7 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                 // success on /root/node_modules/file6.ts
             ], /*isExternalLibraryImport*/ true);
 
-            function check(name: string, expected: File, expectedFailedLookups: string[], isExternalLibraryImport = false) {
+            function check(name: string, expected: File, expectedFailedLookups: string[] | undefined, isExternalLibraryImport = false) {
                 const result = ts.resolveModuleName(name, main.name, options, host);
                 checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(expected.name, isExternalLibraryImport), expectedFailedLookups);
             }
@@ -1196,7 +1196,7 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                     ]
                 }
             };
-            check("folder1/file1", file1, []);
+            check("folder1/file1", file1, /*expectedFailedLookups*/ undefined);
             check("folder1/file2", file2, [
                 // first try '*'
                 "/root/folder1/file2.ts",
@@ -1204,7 +1204,7 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                 "/root/folder1/file2.d.ts",
                 // success when using 'generated/*'
             ]);
-            check("/rooted/folder1/file2", file2, []);
+            check("/rooted/folder1/file2", file2, /*expectedFailedLookups*/ undefined);
             check("folder1/file3", file3, [
                 // first try '*'
                 "/root/folder1/file3.ts",
@@ -1223,7 +1223,7 @@ describe("unittests:: moduleResolution:: baseUrl augmented module resolution", (
                 "/root/folder1/file3.d.ts",
             ]);
 
-            function check(name: string, expected: File, expectedFailedLookups: string[]) {
+            function check(name: string, expected: File, expectedFailedLookups: string[] | undefined) {
                 const result = ts.resolveModuleName(name, main.name, options, host);
                 checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(expected.name), expectedFailedLookups);
             }

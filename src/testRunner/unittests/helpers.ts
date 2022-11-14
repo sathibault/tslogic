@@ -235,8 +235,8 @@ export function checkResolvedModule(actual: ts.ResolvedModuleFull | undefined, e
     return true;
 }
 
-export function checkResolvedModuleWithFailedLookupLocations(actual: ts.ResolvedModuleWithFailedLookupLocations, expectedResolvedModule: ts.ResolvedModuleFull, expectedFailedLookupLocations: string[]): void {
+export function checkResolvedModuleWithFailedLookupLocations(actual: ts.ResolvedModuleWithFailedLookupLocations, expectedResolvedModule: ts.ResolvedModuleFull, expectedFailedLookupLocations: string[] | undefined): void {
     assert.isTrue(actual.resolvedModule !== undefined, "module should be resolved");
     checkResolvedModule(actual.resolvedModule, expectedResolvedModule);
-    assert.deepEqual(actual.failedLookupLocations, expectedFailedLookupLocations, `Failed lookup locations should match - expected has ${expectedFailedLookupLocations.length}, actual has ${actual.failedLookupLocations.length}`);
+    assert.deepEqual(actual.failedLookupLocations, expectedFailedLookupLocations, `Failed lookup locations should match - expected has ${expectedFailedLookupLocations?.length}, actual has ${actual.failedLookupLocations?.length}`);
 }
