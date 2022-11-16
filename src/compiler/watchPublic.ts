@@ -56,7 +56,6 @@ import {
     MapLike,
     maybeBind,
     ModuleResolutionCache,
-    ModuleResolutionInfo,
     noop,
     noopFileWatcher,
     parseConfigHostFromCompilerHostLike,
@@ -82,7 +81,6 @@ import {
     sys,
     System,
     toPath,
-    TypeReferenceDirectiveResolutionInfo,
     updateErrorForNoInputFiles,
     updateMissingFilePathsWatch,
     updateSharedExtendedConfigFileWatcher,
@@ -209,13 +207,13 @@ export interface ProgramHost<T extends BuilderProgram> {
      *
      * If provided, used to resolve the module names, otherwise typescript's default module resolution
      */
-    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames: string[] | undefined, redirectedReference: ResolvedProjectReference | undefined, options: CompilerOptions, containingSourceFile?: SourceFile, resolutionInfo?: ModuleResolutionInfo): (ResolvedModule | undefined)[];
+    resolveModuleNames?(moduleNames: string[], containingFile: string, reusedNames: string[] | undefined, redirectedReference: ResolvedProjectReference | undefined, options: CompilerOptions, containingSourceFile?: SourceFile): (ResolvedModule | undefined)[];
     /**
      * @deprecated supply resolveTypeReferenceDirectiveReferences instead for resolution that can handle newer resolutions
      *
      * If provided, used to resolve type reference directives, otherwise typescript's default resolution
      */
-    resolveTypeReferenceDirectives?(typeReferenceDirectiveNames: string[] | readonly FileReference[], containingFile: string, redirectedReference: ResolvedProjectReference | undefined, options: CompilerOptions, containingFileMode?: ResolutionMode, resolutionInfo?: TypeReferenceDirectiveResolutionInfo): (ResolvedTypeReferenceDirective | undefined)[];
+    resolveTypeReferenceDirectives?(typeReferenceDirectiveNames: string[] | readonly FileReference[], containingFile: string, redirectedReference: ResolvedProjectReference | undefined, options: CompilerOptions, containingFileMode?: ResolutionMode): (ResolvedTypeReferenceDirective | undefined)[];
     resolveModuleNameLiterals?(
         moduleLiterals: readonly StringLiteralLike[],
         containingFile: string,
