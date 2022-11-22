@@ -5058,7 +5058,7 @@ declare namespace ts {
     export {};
 }
 declare namespace ts {
-    function checkOperatorOverload(leftType: Type, rightType: Type): Type | undefined;
+    function checkBinaryOpOverload(operator: SyntaxKind, leftType: Type, rightType: Type): Type | undefined;
 }
 declare namespace ts {
     /**

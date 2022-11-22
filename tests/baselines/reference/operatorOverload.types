@@ -1,0 +1,44 @@
+=== tests/cases/compiler/operatorOverload.ts ===
+class UInt<W extends number> {
+>UInt : UInt<W>
+
+  width: W;
+>width : W
+
+  value: number;
+>value : number
+
+  constructor(w: W, v: number) {
+>w : W
+>v : number
+
+    this.width=w;
+>this.width=w : W
+>this.width : W
+>this : this
+>width : W
+>w : W
+
+    this.value=v;
+>this.value=v : number
+>this.value : number
+>this : this
+>value : number
+>v : number
+  }
+}
+
+const x: UInt<1> = { width: 1, value: 1};
+>x : UInt<1>
+>{ width: 1, value: 1} : { width: 1; value: number; }
+>width : 1
+>1 : 1
+>value : number
+>1 : 1
+
+const y: UInt<2> = x + x;
+>y : UInt<2>
+>x + x : UInt<2>
+>x : UInt<1>
+>x : UInt<1>
+

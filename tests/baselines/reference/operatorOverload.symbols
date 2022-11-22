@@ -1,0 +1,43 @@
+=== tests/cases/compiler/operatorOverload.ts ===
+class UInt<W extends number> {
+>UInt : Symbol(UInt, Decl(operatorOverload.ts, 0, 0))
+>W : Symbol(W, Decl(operatorOverload.ts, 0, 11))
+
+  width: W;
+>width : Symbol(UInt.width, Decl(operatorOverload.ts, 0, 30))
+>W : Symbol(W, Decl(operatorOverload.ts, 0, 11))
+
+  value: number;
+>value : Symbol(UInt.value, Decl(operatorOverload.ts, 1, 11))
+
+  constructor(w: W, v: number) {
+>w : Symbol(w, Decl(operatorOverload.ts, 3, 14))
+>W : Symbol(W, Decl(operatorOverload.ts, 0, 11))
+>v : Symbol(v, Decl(operatorOverload.ts, 3, 19))
+
+    this.width=w;
+>this.width : Symbol(UInt.width, Decl(operatorOverload.ts, 0, 30))
+>this : Symbol(UInt, Decl(operatorOverload.ts, 0, 0))
+>width : Symbol(UInt.width, Decl(operatorOverload.ts, 0, 30))
+>w : Symbol(w, Decl(operatorOverload.ts, 3, 14))
+
+    this.value=v;
+>this.value : Symbol(UInt.value, Decl(operatorOverload.ts, 1, 11))
+>this : Symbol(UInt, Decl(operatorOverload.ts, 0, 0))
+>value : Symbol(UInt.value, Decl(operatorOverload.ts, 1, 11))
+>v : Symbol(v, Decl(operatorOverload.ts, 3, 19))
+  }
+}
+
+const x: UInt<1> = { width: 1, value: 1};
+>x : Symbol(x, Decl(operatorOverload.ts, 9, 5))
+>UInt : Symbol(UInt, Decl(operatorOverload.ts, 0, 0))
+>width : Symbol(width, Decl(operatorOverload.ts, 9, 20))
+>value : Symbol(value, Decl(operatorOverload.ts, 9, 30))
+
+const y: UInt<2> = x + x;
+>y : Symbol(y, Decl(operatorOverload.ts, 10, 5))
+>UInt : Symbol(UInt, Decl(operatorOverload.ts, 0, 0))
+>x : Symbol(x, Decl(operatorOverload.ts, 9, 5))
+>x : Symbol(x, Decl(operatorOverload.ts, 9, 5))
+

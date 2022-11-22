@@ -34485,6 +34485,10 @@ namespace ts {
                 case SyntaxKind.CaretEqualsToken:
                 case SyntaxKind.AmpersandToken:
                 case SyntaxKind.AmpersandEqualsToken:
+                    let overload1 = checkBinaryOpOverload(operator, leftType, rightType);
+                    if (overload1)
+                        return overload1;
+
                     if (leftType === silentNeverType || rightType === silentNeverType) {
                         return silentNeverType;
                     }
@@ -34540,9 +34544,9 @@ namespace ts {
                     }
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.PlusEqualsToken:
-                    let overload = checkOperatorOverload(leftType, rightType);
-                    if (overload)
-                        return overload;
+                    let overload2 = checkBinaryOpOverload(operator, leftType, rightType);
+                    if (overload2)
+                        return overload2;
 
                     if (leftType === silentNeverType || rightType === silentNeverType) {
                         return silentNeverType;
