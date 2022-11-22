@@ -2420,6 +2420,8 @@ declare namespace ts {
          * and the operation is cancelled, then it should be discarded, otherwise it is safe to keep.
          */
         runWithCancellationToken<T>(token: CancellationToken, cb: (checker: TypeChecker) => T): T;
+        getNumberLiteralType(value: number): NumberLiteralType;
+        createTypeReference(target: GenericType, typeArguments: readonly Type[] | undefined): TypeReference;
     }
     export enum NodeBuilderFlags {
         None = 0,
@@ -5054,6 +5056,9 @@ declare namespace ts {
     export function nodeModuleNameResolver(moduleName: string, containingFile: string, compilerOptions: CompilerOptions, host: ModuleResolutionHost, cache?: ModuleResolutionCache, redirectedReference?: ResolvedProjectReference): ResolvedModuleWithFailedLookupLocations;
     export function classicNameResolver(moduleName: string, containingFile: string, compilerOptions: CompilerOptions, host: ModuleResolutionHost, cache?: NonRelativeModuleNameResolutionCache, redirectedReference?: ResolvedProjectReference): ResolvedModuleWithFailedLookupLocations;
     export {};
+}
+declare namespace ts {
+    function checkOperatorOverload(leftType: Type, rightType: Type): Type | undefined;
 }
 declare namespace ts {
     /**

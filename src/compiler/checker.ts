@@ -732,6 +732,9 @@ namespace ts {
             getTypeOnlyAliasDeclaration,
             getMemberOverrideModifierStatus,
             isTypeParameterPossiblyReferenced,
+
+            getNumberLiteralType,
+            createTypeReference,
         };
 
         function runWithInferenceBlockedFromSourceNode<T>(node: Node | undefined, fn: () => T): T {
@@ -34537,6 +34540,10 @@ namespace ts {
                     }
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.PlusEqualsToken:
+                    let overload = checkOperatorOverload(leftType, rightType);
+                    if (overload)
+                        return overload;
+
                     if (leftType === silentNeverType || rightType === silentNeverType) {
                         return silentNeverType;
                     }

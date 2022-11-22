@@ -4857,6 +4857,9 @@ namespace ts {
         /* @internal */ getTypeOnlyAliasDeclaration(symbol: Symbol): TypeOnlyAliasDeclaration | undefined;
         /* @internal */ getMemberOverrideModifierStatus(node: ClassLikeDeclaration, member: ClassElement): MemberOverrideStatus;
         /* @internal */ isTypeParameterPossiblyReferenced(tp: TypeParameter, node: Node): boolean;
+
+        getNumberLiteralType(value: number): NumberLiteralType;
+        createTypeReference(target: GenericType, typeArguments: readonly Type[] | undefined): TypeReference;
     }
 
     /* @internal */
