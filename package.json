@@ -1,23 +1,17 @@
 {
-    "name": "typescript",
-    "author": "Microsoft Corp.",
-    "homepage": "https://www.typescriptlang.org/",
-    "version": "4.9.3",
+    "name": "@streamlogic/tslogic",
+    "author": "StreamLogic",
+    "homepage": "https://streamlogic.io/",
+    "version": "1.0.0",
     "license": "Apache-2.0",
-    "description": "TypeScript is a language for application scale JavaScript development",
+    "description": "TS Logic",
     "keywords": [
-        "TypeScript",
-        "Microsoft",
         "compiler",
-        "language",
-        "javascript"
+        "language"
     ],
-    "bugs": {
-        "url": "https://github.com/Microsoft/TypeScript/issues"
-    },
     "repository": {
         "type": "git",
-        "url": "https://github.com/Microsoft/TypeScript.git"
+        "url": "https://github.com/sathibault/tslogic.git"
     },
     "main": "./lib/typescript.js",
     "typings": "./lib/typescript.d.ts",
