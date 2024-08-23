@@ -49,9 +49,12 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
           isBitType(rightType) && rightType.resolvedTypeArguments) {
             const w1 = (leftType.resolvedTypeArguments[0] as LiteralType).value as number;
             const w2 = (rightType.resolvedTypeArguments[0] as LiteralType).value as number;
-            const rw = ((w1 >= w2) ? w1 : w2);
+            const rw = (w1 >= w2) ? w1 : w2;
             const arg = leftType.checker.getNumberLiteralType(rw);
-            return leftType.checker.createTypeReference(leftType.target, [arg]);
+            if (isSignedBitType(leftType))
+              return leftType.checker.createTypeReference(leftType.target, [arg]);
+            else
+              return rightType.checker.createTypeReference(rightType.target, [arg]);
       } else if (isBitType(leftType) && leftType.resolvedTypeArguments && isNumberType(rightType) && isConstExpression(right)) {
         return leftType;
       } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType) && isConstExpression(left)) {
@@ -78,7 +81,7 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
 }
 
 // Returns true for literal values, unary + or - of literal a expression
-function isConstExpression(expr: Expression) {
+export function isConstExpression(expr: Expression) {
   if (expr.kind == SyntaxKind.PrefixUnaryExpression) {
     const unary = expr as PrefixUnaryExpression;
     if (unary.operator == SyntaxKind.PlusToken || unary.operator == SyntaxKind.MinusToken)
@@ -93,6 +96,10 @@ export function checkInitializerOverload(type: ts.Type, initializer: ts.Expressi
       return true;
   }
   return false;
+}
+
+function isSignedBitType(t: ts.TypeReference) {
+  return t.symbol.escapedName == 'Int' ? true : false;
 }
 
 export function isBitType(t: ts.Type): t is ts.TypeReference {
