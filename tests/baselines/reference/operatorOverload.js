@@ -1,23 +1,24 @@
 //// [operatorOverload.ts]
-class UInt<W extends number> {
-  width: W;
-  value: number;
-  constructor(w: W, v: number) {
-    this.width=w;
-    this.value=v;
-  }
-}
+var N=3;
+N.toLocaleString();
+var a: UInt<8>;
+a = 1;
+a += 2;
+
+var b: uint16 = 300;
 
 const x: UInt<1> = { width: 1, value: 1};
 const y: UInt<2> = x + x;
+const z: UInt<2> = x + 1;
+
 
 //// [operatorOverload.js]
-var UInt = /** @class */ (function () {
-    function UInt(w, v) {
-        this.width = w;
-        this.value = v;
-    }
-    return UInt;
-}());
-var x = { width: 1, value: 1 };
-var y = x + x;
+var N = 3;
+N.toLocaleString();
+var a;
+a = 1;
+a += 2;
+var b = 300;
+const x = { width: 1, value: 1 };
+const y = x + x;
+const z = x + 1;

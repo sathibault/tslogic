@@ -2,7 +2,7 @@
     "name": "@streamlogic/tslogic",
     "author": "StreamLogic",
     "homepage": "https://streamlogic.io/",
-    "version": "5.0.1",
+    "version": "5.0.4",
     "license": "Apache-2.0",
     "description": "TS Logic",
     "keywords": [
@@ -94,6 +94,8 @@
     },
     "scripts": {
         "test": "gulp runtests-parallel --light=false",
+        "test:operator": "gulp runtests --tests=operatorOver*",
+        "test:jpeg": "gulp runtests --tests=jpeg*",
         "test:eslint-rules": "gulp run-eslint-rules-tests",
         "build": "npm run build:compiler && npm run build:tests",
         "build:compiler": "gulp local",

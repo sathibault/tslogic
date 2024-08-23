@@ -5058,7 +5058,11 @@ declare namespace ts {
     export {};
 }
 declare namespace ts {
-    function checkBinaryOpOverload(operator: SyntaxKind, leftType: Type, rightType: Type): Type | undefined;
+    function checkUnaryOpOverload(operator: SyntaxKind, _expr: Expression, exprType: Type): Type | undefined;
+    function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, leftType: Type, right: Expression, rightType: Type): Type | undefined;
+    function checkInitializerOverload(type: ts.Type, initializer: ts.Expression): boolean;
+    function isBitType(t: ts.Type): t is ts.TypeReference;
+    function isNumberType(type: ts.Type): number;
 }
 declare namespace ts {
     /**

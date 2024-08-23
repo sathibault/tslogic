@@ -1,0 +1,5 @@
+{
+    "scenario": "jpeg",
+    "projectRoot": "tests/cases/projects/jpeg",
+    "moduleResolution": "node"
+}

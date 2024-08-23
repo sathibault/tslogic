@@ -18623,6 +18623,12 @@ namespace ts {
             if (source === target) {
                 return true;
             }
+            if (relation === assignableRelation ||
+                relation === subtypeRelation ||
+                relation === comparableRelation) {
+                  if (isBitType(source) && isNumberType(target))
+                    return true;
+            }
             if (relation !== identityRelation) {
                 if (relation === comparableRelation && !(target.flags & TypeFlags.Never) && isSimpleTypeRelatedTo(target, source, relation) || isSimpleTypeRelatedTo(source, target, relation)) {
                     return true;
@@ -20889,6 +20895,8 @@ namespace ts {
             }
 
             function indexInfoRelatedTo(sourceInfo: IndexInfo, targetInfo: IndexInfo, reportErrors: boolean) {
+                if (isBitType(sourceInfo.type) && isNumberType(targetInfo.type))
+                  return Ternary.True;
                 const related = isRelatedTo(sourceInfo.type, targetInfo.type, RecursionFlags.Both, reportErrors);
                 if (!related && reportErrors) {
                     if (sourceInfo.keyType === targetInfo.keyType) {
@@ -33859,6 +33867,9 @@ namespace ts {
                         }));
                     }
             }
+            let overload = checkUnaryOpOverload(node.operator, node, operandType);
+            if (overload)
+                return overload;
             switch (node.operator) {
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
@@ -34453,6 +34464,13 @@ namespace ts {
             return checkBinaryLikeExpressionWorker(left, operatorToken, right, leftType, rightType, errorNode);
         }
 
+        // This seems necessary to populate resolvedTypeArguments for types like: type uint8 = UInt<8>
+        function resolveRef(type: Type) {
+          if (getObjectFlags(type) & ObjectFlags.Reference)
+            return (type as TypeReference).node ? createTypeReference((type as TypeReference).target, getTypeArguments(type as TypeReference)) : getSingleBaseForNonAugmentingSubtype(type) || type;
+          return type;
+        }
+
         function checkBinaryLikeExpressionWorker(
             left: Expression,
             operatorToken: Node,
@@ -34462,6 +34480,10 @@ namespace ts {
             errorNode?: Node
         ): Type {
             const operator = operatorToken.kind;
+
+            let overload = checkBinaryOpOverload(operator, left, resolveRef(leftType), right, resolveRef(rightType));
+            if (overload)
+                return overload;
             switch (operator) {
                 case SyntaxKind.AsteriskToken:
                 case SyntaxKind.AsteriskAsteriskToken:
@@ -34485,10 +34507,6 @@ namespace ts {
                 case SyntaxKind.CaretEqualsToken:
                 case SyntaxKind.AmpersandToken:
                 case SyntaxKind.AmpersandEqualsToken:
-                    let overload1 = checkBinaryOpOverload(operator, leftType, rightType);
-                    if (overload1)
-                        return overload1;
-
                     if (leftType === silentNeverType || rightType === silentNeverType) {
                         return silentNeverType;
                     }
@@ -34544,10 +34562,6 @@ namespace ts {
                     }
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.PlusEqualsToken:
-                    let overload2 = checkBinaryOpOverload(operator, leftType, rightType);
-                    if (overload2)
-                        return overload2;
-
                     if (leftType === silentNeverType || rightType === silentNeverType) {
                         return silentNeverType;
                     }
@@ -38568,7 +38582,8 @@ namespace ts {
                         (initializer.properties.length === 0 || isPrototypeAccess(node.name)) &&
                         !!symbol.exports?.size;
                     if (!isJSObjectLiteralInitializer && node.parent.parent.kind !== SyntaxKind.ForInStatement) {
-                        checkTypeAssignableToAndOptionallyElaborate(checkExpressionCached(initializer), type, node, initializer, /*headMessage*/ undefined);
+                        if (!checkInitializerOverload(resolveRef(type), initializer))
+                          checkTypeAssignableToAndOptionallyElaborate(checkExpressionCached(initializer), type, node, initializer, /*headMessage*/ undefined);
                     }
                 }
                 if (symbol.declarations && symbol.declarations.length > 1) {
