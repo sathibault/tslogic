@@ -35,31 +35,27 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
       if (isBitType(leftType) && leftType.resolvedTypeArguments &&
           isBitType(rightType) && rightType.resolvedTypeArguments) {
           return leftType;
-      } else if (isBitType(leftType) && leftType.resolvedTypeArguments && isNumberType(rightType) && isLiteralExpression(right)) {
+      } else if (isBitType(leftType) && leftType.resolvedTypeArguments && isNumberType(rightType) && isConstExpression(right)) {
           return leftType;
-      } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType) && isLiteralExpression(left)) {
+      } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType) && isConstExpression(left)) {
           return leftType;
       }
       break;
     case SyntaxKind.PlusToken:
     case SyntaxKind.MinusToken:
+    case SyntaxKind.AsteriskToken:
+    case SyntaxKind.SlashToken:
       if (isBitType(leftType) && leftType.resolvedTypeArguments &&
           isBitType(rightType) && rightType.resolvedTypeArguments) {
             const w1 = (leftType.resolvedTypeArguments[0] as LiteralType).value as number;
             const w2 = (rightType.resolvedTypeArguments[0] as LiteralType).value as number;
-            const rw = 1 + ((w1 >= w2) ? w1 : w2);
+            const rw = ((w1 >= w2) ? w1 : w2);
             const arg = leftType.checker.getNumberLiteralType(rw);
             return leftType.checker.createTypeReference(leftType.target, [arg]);
-      } else if (isBitType(leftType) && leftType.resolvedTypeArguments && isNumberType(rightType)) {
-        const w = (leftType.resolvedTypeArguments[0] as LiteralType).value as number;
-        const rw = 1 + w;
-        const arg = leftType.checker.getNumberLiteralType(rw);
-        return leftType.checker.createTypeReference(leftType.target, [arg]);
-      } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType)) {
-        const w = (rightType.resolvedTypeArguments[0] as LiteralType).value as number;
-        const rw = 1 + w;
-        const arg = rightType.checker.getNumberLiteralType(rw);
-        return rightType.checker.createTypeReference(rightType.target, [arg]);
+      } else if (isBitType(leftType) && leftType.resolvedTypeArguments && isNumberType(rightType) && isConstExpression(right)) {
+        return leftType;
+      } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType) && isConstExpression(left)) {
+        return rightType;
       }
       break;
     case SyntaxKind.EqualsToken:
@@ -71,42 +67,24 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
     case SyntaxKind.AsteriskEqualsToken:
     case SyntaxKind.LessThanLessThanEqualsToken:
     case SyntaxKind.GreaterThanGreaterThanEqualsToken:
-          if (isBitType(leftType) && leftType.resolvedTypeArguments) {
+      if (isBitType(leftType) && leftType.resolvedTypeArguments) {
         if (isBitType(rightType) && rightType.resolvedTypeArguments)
           return leftType;
-        else if (isNumberType(rightType) && isLiteralExpression(right))
+        else if (isNumberType(rightType) && isConstExpression(right))
           return leftType;
       }
       break;
-    case SyntaxKind.AsteriskToken:
-      if (isBitType(leftType) && leftType.resolvedTypeArguments &&
-          isBitType(rightType) && rightType.resolvedTypeArguments) {
-        const w1 = (leftType.resolvedTypeArguments[0] as LiteralType).value as number;
-        const w2 = (rightType.resolvedTypeArguments[0] as LiteralType).value as number;
-        const rw = w1 + w2;
-        const arg = leftType.checker.getNumberLiteralType(rw);
-        return leftType.checker.createTypeReference(leftType.target, [arg]);
-      } else if (isBitType(leftType) && leftType.resolvedTypeArguments && isNumberType(rightType)) {
-        const w = (leftType.resolvedTypeArguments[0] as LiteralType).value as number;
-        const rw = 2 * w;
-        const arg = leftType.checker.getNumberLiteralType(rw);
-        return leftType.checker.createTypeReference(leftType.target, [arg]);
-      } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType)) {
-        const w = (rightType.resolvedTypeArguments[0] as LiteralType).value as number;
-        const rw = 2 * w;
-        const arg = rightType.checker.getNumberLiteralType(rw);
-        return rightType.checker.createTypeReference(rightType.target, [arg]);
-      }
-      break;
-      case SyntaxKind.SlashToken:
-        if (isBitType(leftType) && leftType.resolvedTypeArguments) {
-          if (isBitType(rightType) && rightType.resolvedTypeArguments)
-            return leftType;
-          else if (isNumberType(rightType) && isLiteralExpression(right))
-            return leftType;
-        } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isNumberType(leftType) && isLiteralExpression(left))
-          return rightType;
   }
+}
+
+// Returns true for literal values, unary + or - of literal a expression
+function isConstExpression(expr: Expression) {
+  if (expr.kind == SyntaxKind.PrefixUnaryExpression) {
+    const unary = expr as PrefixUnaryExpression;
+    if (unary.operator == SyntaxKind.PlusToken || unary.operator == SyntaxKind.MinusToken)
+      return isLiteralExpression(unary.operand);
+  }
+  return isLiteralExpression(expr);
 }
 
 export function checkInitializerOverload(type: ts.Type, initializer: ts.Expression): boolean {
