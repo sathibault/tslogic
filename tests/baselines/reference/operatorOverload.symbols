@@ -38,3 +38,29 @@ const z: UInt<2> = x + 1;
 >UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
 >x : Symbol(x, Decl(operatorOverload.ts, 8, 5))
 
+
+const FX_SHR: uint8 = 15;
+>FX_SHR : Symbol(FX_SHR, Decl(operatorOverload.ts, 13, 5))
+>uint8 : Symbol(uint8, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+
+function fx_mul(x: int32, y: int32) {
+>fx_mul : Symbol(fx_mul, Decl(operatorOverload.ts, 13, 25))
+>x : Symbol(x, Decl(operatorOverload.ts, 15, 16))
+>int32 : Symbol(int32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+>y : Symbol(y, Decl(operatorOverload.ts, 15, 25))
+>int32 : Symbol(int32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+
+  var prod: int64 = int64(x)*int64(y);
+>prod : Symbol(prod, Decl(operatorOverload.ts, 16, 5))
+>int64 : Symbol(int64, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+>int64 : Symbol(int64, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+>x : Symbol(x, Decl(operatorOverload.ts, 15, 16))
+>int64 : Symbol(int64, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+>y : Symbol(y, Decl(operatorOverload.ts, 15, 25))
+
+  return int32(prod >> FX_SHR);
+>int32 : Symbol(int32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+>prod : Symbol(prod, Decl(operatorOverload.ts, 16, 5))
+>FX_SHR : Symbol(FX_SHR, Decl(operatorOverload.ts, 13, 5))
+}
+

@@ -9,30 +9,30 @@ const sab = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 1024);
 >BYTES_PER_ELEMENT : number
 >1024 : 1024
 
-const int32 = new Int32Array(sab);
->int32 : Int32Array
+const int32ary = new Int32Array(sab);
+>int32ary : Int32Array
 >new Int32Array(sab) : Int32Array
 >Int32Array : Int32ArrayConstructor
 >sab : SharedArrayBuffer
 
-const waitValue = Atomics.wait(int32, 0, 0);
+const waitValue = Atomics.wait(int32ary, 0, 0);
 >waitValue : "ok" | "not-equal" | "timed-out"
->Atomics.wait(int32, 0, 0) : "ok" | "not-equal" | "timed-out"
+>Atomics.wait(int32ary, 0, 0) : "ok" | "not-equal" | "timed-out"
 >Atomics.wait : { (typedArray: Int32Array, index: number, value: number, timeout?: number | undefined): "ok" | "not-equal" | "timed-out"; (typedArray: BigInt64Array, index: number, value: bigint, timeout?: number | undefined): "ok" | "not-equal" | "timed-out"; }
 >Atomics : Atomics
 >wait : { (typedArray: Int32Array, index: number, value: number, timeout?: number | undefined): "ok" | "not-equal" | "timed-out"; (typedArray: BigInt64Array, index: number, value: bigint, timeout?: number | undefined): "ok" | "not-equal" | "timed-out"; }
->int32 : Int32Array
+>int32ary : Int32Array
 >0 : 0
 >0 : 0
 
-const { async, value } = Atomics.waitAsync(int32, 0, BigInt(0));
+const { async, value } = Atomics.waitAsync(int32ary, 0, BigInt(0));
 >async : boolean
 >value : "ok" | "not-equal" | "timed-out" | Promise<"ok" | "not-equal" | "timed-out">
->Atomics.waitAsync(int32, 0, BigInt(0)) : { async: false; value: "ok" | "not-equal" | "timed-out"; } | { async: true; value: Promise<"ok" | "not-equal" | "timed-out">; }
+>Atomics.waitAsync(int32ary, 0, BigInt(0)) : { async: false; value: "ok" | "not-equal" | "timed-out"; } | { async: true; value: Promise<"ok" | "not-equal" | "timed-out">; }
 >Atomics.waitAsync : (typedArray: Int32Array | BigInt64Array, index: number, value: bigint, timeout?: number | undefined) => { async: false; value: "ok" | "not-equal" | "timed-out"; } | { async: true; value: Promise<"ok" | "not-equal" | "timed-out">; }
 >Atomics : Atomics
 >waitAsync : (typedArray: Int32Array | BigInt64Array, index: number, value: bigint, timeout?: number | undefined) => { async: false; value: "ok" | "not-equal" | "timed-out"; } | { async: true; value: Promise<"ok" | "not-equal" | "timed-out">; }
->int32 : Int32Array
+>int32ary : Int32Array
 >0 : 0
 >BigInt(0) : bigint
 >BigInt : BigIntConstructor

@@ -12,9 +12,7 @@ const y: UInt<2> = x + x;
 const z: UInt<2> = x + 1;
 
 
-const FX_K = 32768;
-const FX_SHR = 15;
-const FX_ROUND = 16384;
+const FX_SHR: uint8 = 15;
 
 function fx_mul(x: int32, y: int32) {
   var prod: int64 = int64(x)*int64(y);
