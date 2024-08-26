@@ -4950,6 +4950,15 @@ namespace ts {
             return result;
         }
 
+        function exprToString(expr: Expression, writer: EmitTextWriter = createTextWriter("")): string {
+          const options = { removeComments: true };
+          const printer = createPrinter(options);
+          const sourceFile = getSourceFileOfNode(expr);
+          printer.writeNode(EmitHint.Expression, expr, /*sourceFile*/ sourceFile, writer);
+          const result = writer.getText();
+          return result;
+        }
+
         function getTypeNamesForErrorDisplay(left: Type, right: Type): [string, string] {
             let leftStr = symbolValueDeclarationIsContextSensitive(left.symbol) ? typeToString(left, left.symbol.valueDeclaration) : typeToString(left);
             let rightStr = symbolValueDeclarationIsContextSensitive(right.symbol) ? typeToString(right, right.symbol.valueDeclaration) : typeToString(right);
@@ -17828,11 +17837,73 @@ namespace ts {
             containingMessageChain: (() => DiagnosticMessageChain | undefined) | undefined,
             errorOutputContainer: { errors?: Diagnostic[], skipLogging?: boolean } | undefined
         ): boolean {
+            if (expr && isConstNumberExpression(expr) && isBitType(target)) {
+                return true;
+            } else if (expr && isArrayLiteralExpression(expr)) {
+                if (checkArrayLiteralRelatedToBits(source, target, expr))
+                    return true;
+            }
             if (isTypeRelatedTo(source, target, relation)) return true;
             if (!errorNode || !elaborateError(expr, source, target, relation, headMessage, containingMessageChain, errorOutputContainer)) {
                 return checkTypeRelatedTo(source, target, relation, errorNode, headMessage, containingMessageChain, errorOutputContainer);
             }
             return false;
+        }
+
+        // Check for array literals with number literal elements assigned to Int/UInt arrays
+        function checkArrayLiteralRelatedToBits(
+          source: Type,
+          target: Type,
+          expr: ArrayLiteralExpression) {
+            // Check for array of numbers assigned to array of bit types
+            const len = length(expr.elements);
+            var match = 0;
+            for (let i = 0; i < len; i++) {
+                const elem = expr.elements[i];
+                //if (len == 24) console.log('Check A');
+                // Skip elements which do not exist in the target - a length error on the tuple overall is likely better than an error on a mismatched index signature
+                if (isTupleLikeType(target) && !getPropertyOfType(target, ("" + i) as __String)) break;
+                //if (len == 24) console.log('Check B');
+                if (isOmittedExpression(elem)) break;
+                const nameType = getNumberLiteralType(i);
+                let targetPropType = getBestMatchIndexedAccessTypeOrUndefined(source, target, nameType);
+                //if (len == 24) console.log('Check C', targetPropType && typeToString(targetPropType));
+                if (!targetPropType || targetPropType.flags & TypeFlags.IndexedAccess) break; // Don't elaborate on indexes on generic variables
+                let sourcePropType = getIndexedAccessTypeOrUndefined(source, nameType);
+                //if (len == 24) console.log('Check D');
+                if (!sourcePropType) break;
+                if (isArrayLiteralExpression(elem)) {
+                  // handle nested arrays
+                  if (!checkArrayLiteralRelatedToBits(sourcePropType, targetPropType, elem))
+                    break;
+                } else if (isBitType(targetPropType)) {
+                  //if (len == 24) console.log('Check E');
+                  // sourcePropType may be a union type, but check the expression itself rather than checking for a literal type
+                  if (!isConstNumberExpression(elem)) {
+                    if (sourcePropType.flags & TypeFlags.Union) {
+                      // may be a merged type from multiple elements, so we need to get this elements type specific to avoid getting a number | bit type
+                      // which we can't accept.
+                      // Example: [10, int8(DEPTH)], the second element is not a constant and if its type is number | Int<8>, it will be rejected due
+                      // to the non-const number.
+                      sourcePropType = checkExpressionCached(elem);
+                    }  
+                    //if (len == 24) console.log('Check F', typeToString(sourcePropType));
+                    // handle mixed number literals and expressions with proper bit type
+                    if (!assignableToBitType(sourcePropType, targetPropType))
+                      break;
+                  }
+                } else {
+                  //if (len == 24) console.log('Check G');
+                  break;
+                }
+                match += 1;    
+            }
+            //if (match != len)
+            //  console.log('MATCH FAIL', match, len);
+            //else
+            //  console.log('MATCHED', len);
+            // If len is 0, this may not even be related to bit types, and need to do standard checks
+            return len > 0 && match == len;
         }
 
         function isOrHasGenericConditional(type: Type): boolean {
@@ -18021,7 +18092,7 @@ namespace ts {
                             const diag = createDiagnosticForNode(prop, Diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target, typeToString(specificSource), typeToString(targetPropType));
                             diagnostics.add(diag);
                             resultObj.errors = [diag];
-                        }
+                          }
                         else {
                             const targetIsOptional = !!(propName && (getPropertyOfType(target, propName) || unknownSymbol).flags & SymbolFlags.Optional);
                             const sourceIsOptional = !!(propName && (getPropertyOfType(source, propName) || unknownSymbol).flags & SymbolFlags.Optional);
@@ -18908,6 +18979,8 @@ namespace ts {
                 if (incompatibleStack) reportIncompatibleStack();
                 if (message.elidedInCompatabilityPyramid) return;
                 errorInfo = chainDiagnosticMessages(errorInfo, message, arg0, arg1, arg2, arg3);
+                //console.log(message.message)
+                //throw new Error('REPORT');
             }
 
             function associateRelatedInfo(info: DiagnosticRelatedInformation) {
@@ -34485,6 +34558,16 @@ namespace ts {
             if (overload)
                 return overload;
             switch (operator) {
+                case SyntaxKind.HashPlusToken:
+                case SyntaxKind.HashMinusToken:
+                case SyntaxKind.HashAsteriskToken:
+                    // If checkBinaryOpOverload didn't return a type, it's an error
+                    if (!isBitType(leftType))
+                      error(operatorToken, Diagnostics.Operator_0_cannot_be_applied_to_type_1, tokenToString(operatorToken.kind), typeToString(leftType));
+                    else
+                      error(operatorToken, Diagnostics.Operator_0_cannot_be_applied_to_type_1, tokenToString(operatorToken.kind), typeToString(rightType));
+                    return numberType;
+
                 case SyntaxKind.AsteriskToken:
                 case SyntaxKind.AsteriskAsteriskToken:
                 case SyntaxKind.AsteriskEqualsToken:
@@ -34703,6 +34786,7 @@ namespace ts {
                     return rightType;
 
                 default:
+                    console.log('UNEXPECTED expression', exprToString(left), tokenToString(operatorToken.kind), exprToString(right));
                     return Debug.fail();
             }
 
@@ -38582,8 +38666,10 @@ namespace ts {
                         (initializer.properties.length === 0 || isPrototypeAccess(node.name)) &&
                         !!symbol.exports?.size;
                     if (!isJSObjectLiteralInitializer && node.parent.parent.kind !== SyntaxKind.ForInStatement) {
-                        if (!checkInitializerOverload(resolveRef(type), initializer))
-                          checkTypeAssignableToAndOptionallyElaborate(checkExpressionCached(initializer), type, node, initializer, /*headMessage*/ undefined);
+                        const initType = checkExpressionCached(initializer);
+                        if (!checkInitializerOverload(resolveRef(type), initType, initializer))
+                          if (!isArrayLiteralExpression(initializer) || !checkArrayLiteralRelatedToBits(initType, type, initializer))
+                            checkTypeAssignableToAndOptionallyElaborate(initType, type, node, initializer, /*headMessage*/ undefined);
                     }
                 }
                 if (symbol.declarations && symbol.declarations.length > 1) {

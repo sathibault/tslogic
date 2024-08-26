@@ -26,26 +26,21 @@ var b: uint16 = 300;
 >b : uint16
 >300 : 300
 
-const x: UInt<1> = { width: 1, value: 1};
+const x: UInt<1> = 1;
 >x : UInt<1>
->{ width: 1, value: 1} : { width: number; value: number; }
->width : number
->1 : 1
->value : number
 >1 : 1
 
-const y: UInt<2> = x + x;
->y : UInt<2>
+const y: UInt<1> = x + x;
+>y : UInt<1>
 >x + x : UInt<1>
 >x : UInt<1>
 >x : UInt<1>
 
-const z: UInt<2> = x + 1;
+const z: UInt<2> = x #+ 1;
 >z : UInt<2>
->x + 1 : UInt<1>
+>x #+ 1 : UInt<2>
 >x : UInt<1>
 >1 : 1
-
 
 const FX_SHR: uint8 = 15;
 >FX_SHR : uint8
@@ -56,14 +51,10 @@ function fx_mul(x: int32, y: int32) {
 >x : int32
 >y : int32
 
-  var prod: int64 = int64(x)*int64(y);
+  var prod: int64 = x #* y;
 >prod : int64
->int64(x)*int64(y) : Int<64>
->int64(x) : Int<64>
->int64 : (x: Bits) => Int<64>
+>x #* y : Int<64>
 >x : int32
->int64(y) : Int<64>
->int64 : (x: Bits) => Int<64>
 >y : int32
 
   return int32(prod >> FX_SHR);

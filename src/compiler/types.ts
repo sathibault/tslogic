@@ -69,6 +69,9 @@ namespace ts {
         AsteriskToken,
         AsteriskAsteriskToken,
         SlashToken,
+        HashPlusToken,
+        HashMinusToken,
+        HashAsteriskToken,
         PercentToken,
         PlusPlusToken,
         MinusMinusToken,
@@ -515,6 +518,9 @@ namespace ts {
         | SyntaxKind.AsteriskToken
         | SyntaxKind.AsteriskAsteriskToken
         | SyntaxKind.SlashToken
+        | SyntaxKind.HashPlusToken
+        | SyntaxKind.HashMinusToken
+        | SyntaxKind.HashAsteriskToken
         | SyntaxKind.PercentToken
         | SyntaxKind.PlusPlusToken
         | SyntaxKind.MinusMinusToken
@@ -2241,6 +2247,7 @@ namespace ts {
         | SyntaxKind.AsteriskToken
         | SyntaxKind.SlashToken
         | SyntaxKind.PercentToken
+        | SyntaxKind.HashAsteriskToken
         ;
 
     // see: https://tc39.github.io/ecma262/#prod-MultiplicativeExpression
@@ -2253,6 +2260,8 @@ namespace ts {
     export type AdditiveOperator =
         | SyntaxKind.PlusToken
         | SyntaxKind.MinusToken
+        | SyntaxKind.HashPlusToken
+        | SyntaxKind.HashMinusToken
         ;
 
     // see: https://tc39.github.io/ecma262/#prod-AdditiveExpression

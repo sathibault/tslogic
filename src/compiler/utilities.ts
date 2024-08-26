@@ -3875,10 +3875,13 @@ namespace ts {
                 return OperatorPrecedence.Shift;
             case SyntaxKind.PlusToken:
             case SyntaxKind.MinusToken:
+            case SyntaxKind.HashPlusToken:
+            case SyntaxKind.HashMinusToken:
                 return OperatorPrecedence.Additive;
             case SyntaxKind.AsteriskToken:
             case SyntaxKind.SlashToken:
             case SyntaxKind.PercentToken:
+            case SyntaxKind.HashAsteriskToken:
                 return OperatorPrecedence.Multiplicative;
             case SyntaxKind.AsteriskAsteriskToken:
                 return OperatorPrecedence.Exponentiation;

@@ -11,8 +11,12 @@
 
 interface Bits {}
 interface UInt<W extends number> extends Bits {
+  signed: false;
+  data: W;
 }
 interface Int<W extends number> extends Bits {
+  signed: true;
+  data: W;
 }
 type uint8 = UInt<8>;
 type uint16 = UInt<16>;

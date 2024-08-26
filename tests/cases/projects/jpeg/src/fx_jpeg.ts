@@ -51,7 +51,7 @@ function jo_DCT(d0: int32, d1: int32, d2: int32, d3: int32, d4: int32, d5: int32
   return [d0, d1, d2, d3, d4, d5, d6, d7];
 }
 
-function jo_writeBits(fp: int32, bitBuf: int32, bitCnt: int32, bs: uint16[], debug: boolean = false): [int32, int32] {
+function jo_writeBits(fp: number, bitBuf: int32, bitCnt: int32, bs: uint16[], debug: boolean = false): [int32, int32] {
   bitCnt += int32(bs[1]);
   bitBuf |= int32(bs[0]) << (24 - bitCnt);
   while (bitCnt >= 8) {
@@ -82,7 +82,7 @@ export function jo_calcBits(val: int32, bits: uint16[]) {
   bits[0] = uint16(val & ((1 << int32(bits[1])) - 1));
 }
 
-function jo_processDU(fp: int32, bitBuf: int32, bitCnt: int32, CDU: int32[], du_stride: int32, fdtbl: int32[], DC: int32, HTDC: uint16[][], HTAC: uint16[][], debug: boolean): [int32, int32, int32] {
+function jo_processDU(fp: number, bitBuf: int32, bitCnt: int32, CDU: int32[], du_stride: int32, fdtbl: int32[], DC: int32, HTDC: uint16[][], HTAC: uint16[][], debug: boolean): [int32, int32, int32] {
   var EOB: uint16[] = [HTAC[0][0], HTAC[0][1]];
   var M16zeroes: uint16[] = [HTAC[240][0], HTAC[240][1]];
   for (var i: int32 = 0; i < du_stride*8; i += du_stride) {
@@ -179,7 +179,7 @@ export function fx_write_jpg(filename: string, data: Buffer, width: int32, heigh
   if (!(data!=null) || !(filename!=null) || !width || !height || comp > 4 || comp < 1 || comp == 2) {
     return false;
   }
-  var fp: int32 = fs.openSync(filename, 'w');
+  var fp: number = fs.openSync(filename, 'w');
   if (!(fp!=null)) {
     return false;
   }
@@ -194,8 +194,8 @@ export function fx_write_jpg(filename: string, data: Buffer, width: int32, heigh
     var uvti: int32 = (UVQT[i]*quality + 50) / 100;
     UVTable[s_jo_ZigZag[i]] = uint8(uvti < 1 ? 1 : uvti > 255 ? 255 : uvti);
   }
-  var fdtbl_Y = Array<float32>(64);
-  var fdtbl_UV = Array<float32>(64);
+  var fdtbl_Y = Array<int32>(64);
+  var fdtbl_UV = Array<int32>(64);
   for (var row: int32 = 0, k: int32 = 0; row < 8; ++row) {
     for (var col: int32 = 0; col < 8; ++col , ++k) {
       fdtbl_Y[k] = YTable[s_jo_ZigZag[k]] * aasf_fx[row] * aasf_fx[col] * 2; // max 972
@@ -228,9 +228,9 @@ export function fx_write_jpg(filename: string, data: Buffer, width: int32, heigh
   var dataR = new Uint8Array(data.buffer, data.byteOffset, data.length / Uint8Array.BYTES_PER_ELEMENT);
   var _ptr_dataR: uint32 = 0;
   var dataG = dataR;
-  var _ptr_dataG: uint32 = 0 + ofsG;
+  var _ptr_dataG: uint32 = uint32(0 + ofsG);
   var dataB = dataR;
-  var _ptr_dataB: uint32 = 0 + ofsB;
+  var _ptr_dataB: uint32 = uint32(0 + ofsB);
   var DCY: int32 = 0;
   var DCU: int32 = 0;
   var DCV: int32 = 0;

@@ -191,6 +191,9 @@ namespace ts {
         "**": SyntaxKind.AsteriskAsteriskToken,
         "*": SyntaxKind.AsteriskToken,
         "/": SyntaxKind.SlashToken,
+        "#+": SyntaxKind.HashPlusToken,
+        "#-": SyntaxKind.HashMinusToken,
+        "#*": SyntaxKind.HashAsteriskToken,
         "%": SyntaxKind.PercentToken,
         "++": SyntaxKind.PlusPlusToken,
         "--": SyntaxKind.MinusMinusToken,
@@ -2071,6 +2074,12 @@ namespace ts {
                                 return token = SyntaxKind.PrivateIdentifier;
                             }
                             pos--;
+                        } else if (charAfterHash === CharacterCodes.plus) {
+                          return pos += 2, token = SyntaxKind.HashPlusToken;
+                        } else if (charAfterHash === CharacterCodes.minus) {
+                          return pos += 2, token = SyntaxKind.HashMinusToken;
+                        } else if (charAfterHash === CharacterCodes.asterisk) {
+                          return pos += 2, token = SyntaxKind.HashAsteriskToken;
                         }
 
                         if (isIdentifierStart(charAfterHash, languageVersion)) {
