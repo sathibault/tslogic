@@ -38,6 +38,7 @@ FileWatcher:: Added:: WatchInfo: /user/username/projects/myproject/main.ts 250 u
 Module resolution kind is not specified, using 'NodeJs'.
 Loading module as file / folder, candidate module location '/user/username/projects/myproject/other', target file type 'TypeScript'.
 File '/user/username/projects/myproject/other.ts' does not exist.
+File '/user/username/projects/myproject/other.tslx' does not exist.
 File '/user/username/projects/myproject/other.tsx' does not exist.
 File '/user/username/projects/myproject/other.d.ts' exist - use it as a name resolution result.
 ======== Module name './other' was successfully resolved to '/user/username/projects/myproject/other.d.ts'. ========

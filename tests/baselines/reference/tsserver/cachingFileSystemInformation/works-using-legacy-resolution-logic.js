@@ -69,7 +69,7 @@ Info 30   [00:00:47.000] 	Files (1)
 
 Info 31   [00:00:48.000] -----------------------------------------------
 Info 32   [00:00:49.000] Could not find source file: '/c/f1.ts'.
-Info 33   [00:00:50.000] fileExists:: [{"key":"/c/d/f2.ts","count":1},{"key":"/c/d/f2.tsx","count":1},{"key":"/c/d/f2.d.ts","count":1},{"key":"/c/f2.ts","count":1},{"key":"/c/f2.tsx","count":1},{"key":"/c/f2.d.ts","count":1},{"key":"/f2.ts","count":1},{"key":"/f2.tsx","count":1},{"key":"/f2.d.ts","count":1},{"key":"/c/d/f2.js","count":1},{"key":"/c/d/f2.jsx","count":1},{"key":"/c/f2.js","count":1},{"key":"/c/f2.jsx","count":1},{"key":"/f2.js","count":1},{"key":"/f2.jsx","count":1}]
+Info 33   [00:00:50.000] fileExists:: [{"key":"/c/d/f2.ts","count":1},{"key":"/c/d/f2.tslx","count":1},{"key":"/c/d/f2.tsx","count":1},{"key":"/c/d/f2.d.ts","count":1},{"key":"/c/f2.ts","count":1},{"key":"/c/f2.tslx","count":1},{"key":"/c/f2.tsx","count":1},{"key":"/c/f2.d.ts","count":1},{"key":"/f2.ts","count":1},{"key":"/f2.tslx","count":1},{"key":"/f2.tsx","count":1},{"key":"/f2.d.ts","count":1},{"key":"/c/d/f2.js","count":1},{"key":"/c/d/f2.jsx","count":1},{"key":"/c/f2.js","count":1},{"key":"/c/f2.jsx","count":1},{"key":"/f2.js","count":1},{"key":"/f2.jsx","count":1}]
 Info 34   [00:00:51.000] directoryExists:: [{"key":"/c/d","count":2},{"key":"/c","count":2},{"key":"/","count":2},{"key":"/c/d/node_modules","count":2},{"key":"/c/node_modules","count":1},{"key":"/node_modules","count":1},{"key":"/c/d/node_modules/@types","count":1},{"key":"/c/node_modules/@types","count":1},{"key":"/node_modules/@types","count":1}]
 Info 35   [00:00:52.000] getDirectories:: []
 Info 36   [00:00:53.000] readFile:: []
@@ -93,7 +93,7 @@ Info 44   [00:01:01.000] -----------------------------------------------
 Info 45   [00:01:02.000] getSemanticDiagnostics:: /c/f1.ts:: 1
 Info 46   [00:01:03.000] ../f1.ts(1,1): error TS2304: Cannot find name 'foo'.
 
-Info 47   [00:01:04.000] fileExists:: [{"key":"/c/d/f1.ts","count":1},{"key":"/c/d/f1.tsx","count":1},{"key":"/c/d/f1.d.ts","count":1},{"key":"/c/f1.ts","count":1}]
+Info 47   [00:01:04.000] fileExists:: [{"key":"/c/d/f1.ts","count":1},{"key":"/c/d/f1.tslx","count":1},{"key":"/c/d/f1.tsx","count":1},{"key":"/c/d/f1.d.ts","count":1},{"key":"/c/f1.ts","count":1}]
 Info 48   [00:01:05.000] directoryExists:: [{"key":"/c/d","count":1},{"key":"/c","count":1},{"key":"/c/d/node_modules/@types","count":1},{"key":"/c/node_modules/@types","count":1},{"key":"/node_modules/@types","count":1}]
 Info 49   [00:01:06.000] getDirectories:: []
 Info 50   [00:01:07.000] readFile:: []
@@ -114,7 +114,7 @@ Info 64   [00:01:21.000] Different program with same set of files
 Info 65   [00:01:22.000] getSemanticDiagnostics:: /c/f1.ts:: 1
 Info 66   [00:01:23.000] ../f1.ts(1,1): error TS2304: Cannot find name 'foo'.
 
-Info 67   [00:01:24.000] fileExists:: [{"key":"/c/d/f1.ts","count":1},{"key":"/c/d/f1.tsx","count":1},{"key":"/c/d/f1.d.ts","count":1},{"key":"/c/f1.ts","count":1}]
+Info 67   [00:01:24.000] fileExists:: [{"key":"/c/d/f1.ts","count":1},{"key":"/c/d/f1.tslx","count":1},{"key":"/c/d/f1.tsx","count":1},{"key":"/c/d/f1.d.ts","count":1},{"key":"/c/f1.ts","count":1}]
 Info 68   [00:01:25.000] directoryExists:: [{"key":"/c/d","count":2},{"key":"/c","count":1},{"key":"/c/d/node_modules/@types","count":2},{"key":"/c/node_modules/@types","count":1},{"key":"/node_modules/@types","count":1}]
 Info 69   [00:01:26.000] getDirectories:: []
 Info 70   [00:01:27.000] readFile:: []

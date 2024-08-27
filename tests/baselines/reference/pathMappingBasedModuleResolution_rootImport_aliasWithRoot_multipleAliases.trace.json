@@ -16,6 +16,7 @@
     "Trying substitution './client/*', candidate module location: './client/bar'.",
     "Loading module as file / folder, candidate module location '/root/client/bar', target file type 'TypeScript'.",
     "File '/root/client/bar.ts' does not exist.",
+    "File '/root/client/bar.tslx' does not exist.",
     "File '/root/client/bar.tsx' does not exist.",
     "File '/root/client/bar.d.ts' does not exist.",
     "Directory '/root/client/bar' does not exist, skipping all lookups in it.",

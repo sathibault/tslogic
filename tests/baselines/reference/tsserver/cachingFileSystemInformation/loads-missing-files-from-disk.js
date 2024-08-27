@@ -39,7 +39,7 @@ Info 14   [00:00:26.000] 		Projects: /dev/null/inferredProject1*
 Info 14   [00:00:27.000] getSemanticDiagnostics:: /c/foo.ts:: 1
 Info 15   [00:00:28.000] foo.ts(1,17): error TS2792: Cannot find module 'bar'. Did you mean to set the 'moduleResolution' option to 'node', or to add aliases to the 'paths' option?
 
-Info 16   [00:00:29.000] fileExists:: [{"key":"/c/tsconfig.json","count":1},{"key":"/c/jsconfig.json","count":1},{"key":"/tsconfig.json","count":1},{"key":"/jsconfig.json","count":1},{"key":"/c/bar.ts","count":1},{"key":"/c/bar.tsx","count":1},{"key":"/c/bar.d.ts","count":1},{"key":"/bar.ts","count":1},{"key":"/bar.tsx","count":1},{"key":"/bar.d.ts","count":1},{"key":"/c/bar.js","count":1},{"key":"/c/bar.jsx","count":1},{"key":"/bar.js","count":1},{"key":"/bar.jsx","count":1},{"key":"/c/package.json","count":1},{"key":"/package.json","count":1}]
+Info 16   [00:00:29.000] fileExists:: [{"key":"/c/tsconfig.json","count":1},{"key":"/c/jsconfig.json","count":1},{"key":"/tsconfig.json","count":1},{"key":"/jsconfig.json","count":1},{"key":"/c/bar.ts","count":1},{"key":"/c/bar.tslx","count":1},{"key":"/c/bar.tsx","count":1},{"key":"/c/bar.d.ts","count":1},{"key":"/bar.ts","count":1},{"key":"/bar.tslx","count":1},{"key":"/bar.tsx","count":1},{"key":"/bar.d.ts","count":1},{"key":"/c/bar.js","count":1},{"key":"/c/bar.jsx","count":1},{"key":"/bar.js","count":1},{"key":"/bar.jsx","count":1},{"key":"/c/package.json","count":1},{"key":"/package.json","count":1}]
 Info 17   [00:00:30.000] directoryExists:: [{"key":"/c","count":3},{"key":"/","count":2},{"key":"/c/node_modules","count":2},{"key":"/node_modules","count":1},{"key":"/c/node_modules/@types","count":2},{"key":"/node_modules/@types","count":1}]
 Info 18   [00:00:31.000] getDirectories:: []
 Info 19   [00:00:32.000] readFile:: [{"key":"/c/foo.ts","count":1}]
@@ -99,7 +99,7 @@ Info 33   [00:00:48.000] 	Files (2)
 
 Info 34   [00:00:49.000] -----------------------------------------------
 Info 35   [00:00:50.000] getSemanticDiagnostics:: /c/foo.ts:: 0
-Info 36   [00:00:51.000] fileExists:: [{"key":"/c/bar.ts","count":1},{"key":"/c/bar.tsx","count":1},{"key":"/c/bar.d.ts","count":3}]
+Info 36   [00:00:51.000] fileExists:: [{"key":"/c/bar.ts","count":1},{"key":"/c/bar.tslx","count":1},{"key":"/c/bar.tsx","count":1},{"key":"/c/bar.d.ts","count":3}]
 Info 37   [00:00:52.000] directoryExists:: [{"key":"/c","count":1},{"key":"/c/node_modules/@types","count":1},{"key":"/node_modules/@types","count":1}]
 Info 38   [00:00:53.000] getDirectories:: []
 Info 39   [00:00:54.000] readFile:: [{"key":"/c/bar.d.ts","count":1}]

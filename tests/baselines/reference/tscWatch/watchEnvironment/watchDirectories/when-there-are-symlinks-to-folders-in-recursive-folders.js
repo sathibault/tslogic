@@ -46,9 +46,11 @@ Loading module 'a' from 'node_modules' folder, target file type 'TypeScript'.
 Directory '/home/user/projects/myproject/src/node_modules' does not exist, skipping all lookups in it.
 File '/home/user/projects/myproject/node_modules/a/package.json' does not exist.
 File '/home/user/projects/myproject/node_modules/a.ts' does not exist.
+File '/home/user/projects/myproject/node_modules/a.tslx' does not exist.
 File '/home/user/projects/myproject/node_modules/a.tsx' does not exist.
 File '/home/user/projects/myproject/node_modules/a.d.ts' does not exist.
 File '/home/user/projects/myproject/node_modules/a/index.ts' does not exist.
+File '/home/user/projects/myproject/node_modules/a/index.tslx' does not exist.
 File '/home/user/projects/myproject/node_modules/a/index.tsx' does not exist.
 File '/home/user/projects/myproject/node_modules/a/index.d.ts' exist - use it as a name resolution result.
 Resolving real path for '/home/user/projects/myproject/node_modules/a/index.d.ts', result '/home/user/projects/myproject/node_modules/reala/index.d.ts'.

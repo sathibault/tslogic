@@ -3,6 +3,7 @@
     "Module resolution kind is not specified, using 'NodeJs'.",
     "Loading module as file / folder, candidate module location '/b', target file type 'TypeScript'.",
     "File '/b.ts' does not exist.",
+    "File '/b.tslx' does not exist.",
     "File '/b.tsx' does not exist.",
     "File '/b.d.ts' does not exist.",
     "File '/b/package.json' does not exist.",

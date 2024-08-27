@@ -3,6 +3,7 @@
     "Explicitly specified module resolution kind: 'NodeJs'.",
     "Loading module as file / folder, candidate module location '/foo', target file type 'TypeScript'.",
     "File '/foo.ios.ts' does not exist.",
+    "File '/foo.ios.tslx' does not exist.",
     "File '/foo.ios.tsx' does not exist.",
     "File '/foo.ios.d.ts' does not exist.",
     "File '/foo/package.json' does not exist.",

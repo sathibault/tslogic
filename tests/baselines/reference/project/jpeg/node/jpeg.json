@@ -44,7 +44,8 @@
         "lib.es2020.intl.d.ts",
         "lib.es2020.number.d.ts",
         "lib.esnext.intl.d.ts",
-        "src/fx_jpeg.ts",
+        "src/fx_jpeg.tslx",
+        "src/index.ts",
         "node_modules/@types/node/assert.d.ts",
         "node_modules/@types/node/assert/strict.d.ts",
         "node_modules/undici-types/header.d.ts",
@@ -139,6 +140,7 @@
         "node_modules/@types/node/index.d.ts"
     ],
     "emittedFiles": [
-        "src/fx_jpeg.js"
+        "src/fx_jpeg.js",
+        "src/index.js"
     ]
 }

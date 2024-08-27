@@ -188,16 +188,20 @@ namespace ts {
                 const resolution = nodeModuleNameResolver("./foo", containingFile.name, {}, createModuleResolutionHost(hasDirectoryExists, containingFile, packageJson, indexFile));
                 checkResolvedModuleWithFailedLookupLocations(resolution, createResolvedModule(indexFile.name), [
                     "/a/b/foo.ts",
+                    "/a/b/foo.tslx",
                     "/a/b/foo.tsx",
                     "/a/b/foo.d.ts",
                     "/c/d",
                     "/c/d.ts",
+                    "/c/d.tslx",
                     "/c/d.tsx",
                     "/c/d.d.ts",
                     "/c/d/index.ts",
+                    "/c/d/index.tslx",
                     "/c/d/index.tsx",
                     "/c/d/index.d.ts",
                     "/a/b/foo/index.ts",
+                    "/a/b/foo/index.tslx",
                     "/a/b/foo/index.tsx",
                 ]);
             }
@@ -310,10 +314,12 @@ namespace ts {
                 checkResolvedModuleWithFailedLookupLocations(resolution, createResolvedModule(moduleFile.name, /*isExternalLibraryImport*/ true), [
                     "/a/b/c/d/node_modules/foo/package.json",
                     "/a/b/c/d/node_modules/foo.ts",
+                    "/a/b/c/d/node_modules/foo.tslx",
                     "/a/b/c/d/node_modules/foo.tsx",
                     "/a/b/c/d/node_modules/foo.d.ts",
 
                     "/a/b/c/d/node_modules/foo/index.ts",
+                    "/a/b/c/d/node_modules/foo/index.tslx",
                     "/a/b/c/d/node_modules/foo/index.tsx",
                     "/a/b/c/d/node_modules/foo/index.d.ts",
 
@@ -324,10 +330,12 @@ namespace ts {
 
                     "/a/b/c/node_modules/foo/package.json",
                     "/a/b/c/node_modules/foo.ts",
+                    "/a/b/c/node_modules/foo.tslx",
                     "/a/b/c/node_modules/foo.tsx",
                     "/a/b/c/node_modules/foo.d.ts",
 
                     "/a/b/c/node_modules/foo/index.ts",
+                    "/a/b/c/node_modules/foo/index.tslx",
                     "/a/b/c/node_modules/foo/index.tsx",
                     "/a/b/c/node_modules/foo/index.d.ts",
 
@@ -363,10 +371,12 @@ namespace ts {
                 checkResolvedModuleWithFailedLookupLocations(resolution, createResolvedModule(moduleFile.name, /*isExternalLibraryImport*/ true), [
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo/package.json",
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo.ts",
+                    "/a/node_modules/b/c/node_modules/d/node_modules/foo.tslx",
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo.tsx",
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo.d.ts",
 
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo/index.ts",
+                    "/a/node_modules/b/c/node_modules/d/node_modules/foo/index.tslx",
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo/index.tsx",
                     "/a/node_modules/b/c/node_modules/d/node_modules/foo/index.d.ts",
 
@@ -377,10 +387,12 @@ namespace ts {
 
                     "/a/node_modules/b/c/node_modules/foo/package.json",
                     "/a/node_modules/b/c/node_modules/foo.ts",
+                    "/a/node_modules/b/c/node_modules/foo.tslx",
                     "/a/node_modules/b/c/node_modules/foo.tsx",
                     "/a/node_modules/b/c/node_modules/foo.d.ts",
 
                     "/a/node_modules/b/c/node_modules/foo/index.ts",
+                    "/a/node_modules/b/c/node_modules/foo/index.tslx",
                     "/a/node_modules/b/c/node_modules/foo/index.tsx",
                     "/a/node_modules/b/c/node_modules/foo/index.d.ts",
 
@@ -391,10 +403,12 @@ namespace ts {
 
                     "/a/node_modules/b/node_modules/foo/package.json",
                     "/a/node_modules/b/node_modules/foo.ts",
+                    "/a/node_modules/b/node_modules/foo.tslx",
                     "/a/node_modules/b/node_modules/foo.tsx",
                     "/a/node_modules/b/node_modules/foo.d.ts",
 
                     "/a/node_modules/b/node_modules/foo/index.ts",
+                    "/a/node_modules/b/node_modules/foo/index.tslx",
                     "/a/node_modules/b/node_modules/foo/index.tsx",
                     "/a/node_modules/b/node_modules/foo/index.d.ts",
 
@@ -405,10 +419,12 @@ namespace ts {
 
                     "/a/node_modules/foo/package.json",
                     "/a/node_modules/foo.ts",
+                    "/a/node_modules/foo.tslx",
                     "/a/node_modules/foo.tsx",
                     "/a/node_modules/foo.d.ts",
 
                     "/a/node_modules/foo/index.ts",
+                    "/a/node_modules/foo/index.tslx",
                     "/a/node_modules/foo/index.tsx"
                 ]);
             }
@@ -1039,11 +1055,13 @@ import b = require("./moduleB");
                 check("folder1/file2", file2, [
                     // first try the '*'
                     "/root/folder1/file2.ts",
+                    "/root/folder1/file2.tslx",
                     "/root/folder1/file2.tsx",
                     "/root/folder1/file2.d.ts",
                     "/root/folder1/file2/package.json",
 
                     "/root/folder1/file2/index.ts",
+                    "/root/folder1/file2/index.tslx",
                     "/root/folder1/file2/index.tsx",
                     "/root/folder1/file2/index.d.ts",
                     // then first attempt on 'generated/*' was successful
@@ -1052,37 +1070,44 @@ import b = require("./moduleB");
                 check("folder2/file3", file3, [
                     // first try '*'
                     "/root/folder2/file3.ts",
+                    "/root/folder2/file3.tslx",
                     "/root/folder2/file3.tsx",
                     "/root/folder2/file3.d.ts",
                     "/root/folder2/file3/package.json",
 
                     "/root/folder2/file3/index.ts",
+                    "/root/folder2/file3/index.tslx",
                     "/root/folder2/file3/index.tsx",
                     "/root/folder2/file3/index.d.ts",
 
                     // then use remapped location
                     "/root/generated/folder2/file3.ts",
+                    "/root/generated/folder2/file3.tslx",
                     "/root/generated/folder2/file3.tsx",
                     "/root/generated/folder2/file3.d.ts",
                     "/root/generated/folder2/file3/package.json",
 
                     "/root/generated/folder2/file3/index.ts",
+                    "/root/generated/folder2/file3/index.tslx",
                     "/root/generated/folder2/file3/index.tsx",
                     // success on index.d.ts
                 ]);
                 check("folder2/file4", file4, [
                     // first try '*'
                     "/root/folder2/file4.ts",
+                    "/root/folder2/file4.tslx",
                     "/root/folder2/file4.tsx",
                     "/root/folder2/file4.d.ts",
                     "/root/folder2/file4/package.json",
 
                     "/root/folder2/file4/index.ts",
+                    "/root/folder2/file4/index.tslx",
                     "/root/folder2/file4/index.tsx",
                     "/root/folder2/file4/index.d.ts",
 
                     // try to load from file from remapped location
                     "/root/generated/folder2/file4.ts",
+                    "/root/generated/folder2/file4.tslx",
                     "/root/generated/folder2/file4.tsx",
                     "/root/generated/folder2/file4.d.ts",
                     // success on loading as from folder
@@ -1091,12 +1116,14 @@ import b = require("./moduleB");
                     // load from remapped location
                     // first load from fle
                     "/root/someanotherfolder/file5.ts",
+                    "/root/someanotherfolder/file5.tslx",
                     "/root/someanotherfolder/file5.tsx",
                     "/root/someanotherfolder/file5.d.ts",
 
                     // load from folder
                     "/root/someanotherfolder/file5/package.json",
                     "/root/someanotherfolder/file5/index.ts",
+                    "/root/someanotherfolder/file5/index.tslx",
                     "/root/someanotherfolder/file5/index.tsx",
                     // success on index.d.ts
                 ]);
@@ -1104,24 +1131,28 @@ import b = require("./moduleB");
                     // first try *
                     // load from file
                     "/root/file6.ts",
+                    "/root/file6.tslx",
                     "/root/file6.tsx",
                     "/root/file6.d.ts",
 
                     // load from folder
                     "/root/file6/package.json",
                     "/root/file6/index.ts",
+                    "/root/file6/index.tslx",
                     "/root/file6/index.tsx",
                     "/root/file6/index.d.ts",
 
                     // then try 'generated/*'
                     // load from file
                     "/root/generated/file6.ts",
+                    "/root/generated/file6.tslx",
                     "/root/generated/file6.tsx",
                     "/root/generated/file6.d.ts",
 
                     // load from folder
                     "/root/generated/file6/package.json",
                     "/root/generated/file6/index.ts",
+                    "/root/generated/file6/index.tslx",
                     "/root/generated/file6/index.tsx",
                     "/root/generated/file6/index.d.ts",
 
@@ -1130,11 +1161,13 @@ import b = require("./moduleB");
 
                     // load from file
                     "/root/folder1/node_modules/file6.ts",
+                    "/root/folder1/node_modules/file6.tslx",
                     "/root/folder1/node_modules/file6.tsx",
                     "/root/folder1/node_modules/file6.d.ts",
 
                     // load from folder
                     "/root/folder1/node_modules/file6/index.ts",
+                    "/root/folder1/node_modules/file6/index.tslx",
                     "/root/folder1/node_modules/file6/index.tsx",
                     "/root/folder1/node_modules/file6/index.d.ts",
 
@@ -1186,6 +1219,7 @@ import b = require("./moduleB");
                 check("folder1/file2", file2, [
                     // first try '*'
                     "/root/folder1/file2.ts",
+                    "/root/folder1/file2.tslx",
                     "/root/folder1/file2.tsx",
                     "/root/folder1/file2.d.ts",
                     // success when using 'generated/*'
@@ -1194,17 +1228,21 @@ import b = require("./moduleB");
                 check("folder1/file3", file3, [
                     // first try '*'
                     "/root/folder1/file3.ts",
+                    "/root/folder1/file3.tslx",
                     "/root/folder1/file3.tsx",
                     "/root/folder1/file3.d.ts",
                     // then try 'generated/*'
                     "/root/generated/folder1/file3.ts",
+                    "/root/generated/folder1/file3.tslx",
                     "/root/generated/folder1/file3.tsx",
                     "/root/generated/folder1/file3.d.ts",
                     // fallback to classic
                     "/root/folder1/folder1/file3.ts",
+                    "/root/folder1/folder1/file3.tslx",
                     "/root/folder1/folder1/file3.tsx",
                     "/root/folder1/folder1/file3.d.ts",
                     "/root/folder1/file3.ts",
+                    "/root/folder1/file3.tslx",
                     "/root/folder1/file3.tsx",
                     "/root/folder1/file3.d.ts",
                 ]);
@@ -1237,11 +1275,13 @@ import b = require("./moduleB");
                     // first try current location
                     // load from file
                     "/root/folder1/file2.ts",
+                    "/root/folder1/file2.tslx",
                     "/root/folder1/file2.tsx",
                     "/root/folder1/file2.d.ts",
                     // load from folder
                     "/root/folder1/file2/package.json",
                     "/root/folder1/file2/index.ts",
+                    "/root/folder1/file2/index.tslx",
                     "/root/folder1/file2/index.tsx",
                     "/root/folder1/file2/index.d.ts",
                     // success after using alternative rootDir entry
@@ -1250,11 +1290,13 @@ import b = require("./moduleB");
                     // first try current location
                     // load from file
                     "/root/generated/folder1/file1.ts",
+                    "/root/generated/folder1/file1.tslx",
                     "/root/generated/folder1/file1.tsx",
                     "/root/generated/folder1/file1.d.ts",
                     // load from module
                     "/root/generated/folder1/file1/package.json",
                     "/root/generated/folder1/file1/index.ts",
+                    "/root/generated/folder1/file1/index.tslx",
                     "/root/generated/folder1/file1/index.tsx",
                     "/root/generated/folder1/file1/index.d.ts",
                     // success after using alternative rootDir entry
@@ -1263,21 +1305,25 @@ import b = require("./moduleB");
                     // first try current location
                     // load from file
                     "/root/generated/folder1/file1_1.ts",
+                    "/root/generated/folder1/file1_1.tslx",
                     "/root/generated/folder1/file1_1.tsx",
                     "/root/generated/folder1/file1_1.d.ts",
                     // load from folder
                     "/root/generated/folder1/file1_1/package.json",
                     "/root/generated/folder1/file1_1/index.ts",
+                    "/root/generated/folder1/file1_1/index.tslx",
                     "/root/generated/folder1/file1_1/index.tsx",
                     "/root/generated/folder1/file1_1/index.d.ts",
                     // try alternative rootDir entry
                     // load from file
                     "/root/folder1/file1_1.ts",
+                    "/root/folder1/file1_1.tslx",
                     "/root/folder1/file1_1.tsx",
                     "/root/folder1/file1_1.d.ts",
                     // load from directory
                     "/root/folder1/file1_1/package.json",
                     "/root/folder1/file1_1/index.ts",
+                    "/root/folder1/file1_1/index.tslx",
                     "/root/folder1/file1_1/index.tsx",
                     // success on loading '/root/folder1/file1_1/index.d.ts'
                 ]);
@@ -1309,6 +1355,7 @@ import b = require("./moduleB");
                 check("./file2", file1, file2, [
                     // first load from current location
                     "/root/folder1/file2.ts",
+                    "/root/folder1/file2.tslx",
                     "/root/folder1/file2.tsx",
                     "/root/folder1/file2.d.ts",
                     // then try alternative rootDir entry
@@ -1316,6 +1363,7 @@ import b = require("./moduleB");
                 check("../folder1/file1", file3, file1, [
                     // first load from current location
                     "/root/generated/folder1/file1.ts",
+                    "/root/generated/folder1/file1.tslx",
                     "/root/generated/folder1/file1.tsx",
                     "/root/generated/folder1/file1.d.ts",
                     // then try alternative rootDir entry
@@ -1323,14 +1371,17 @@ import b = require("./moduleB");
                 check("folder1/file1_1", file3, file4, [
                     // current location
                     "/root/generated/folder2/folder1/file1_1.ts",
+                    "/root/generated/folder2/folder1/file1_1.tslx",
                     "/root/generated/folder2/folder1/file1_1.tsx",
                     "/root/generated/folder2/folder1/file1_1.d.ts",
                     // other entry in rootDirs
                     "/root/generated/folder1/file1_1.ts",
+                    "/root/generated/folder1/file1_1.tslx",
                     "/root/generated/folder1/file1_1.tsx",
                     "/root/generated/folder1/file1_1.d.ts",
                     // fallback
                     "/root/folder1/file1_1.ts",
+                    "/root/folder1/file1_1.tslx",
                     "/root/folder1/file1_1.tsx",
                     "/root/folder1/file1_1.d.ts",
                     // found one
@@ -1363,6 +1414,7 @@ import b = require("./moduleB");
                 checkResolvedModuleWithFailedLookupLocations(result, createResolvedModule(libsTypings.name), [
                     // first try to load module as file
                     "/root/src/libs/guid.ts",
+                    "/root/src/libs/guid.tslx",
                     "/root/src/libs/guid.tsx",
                     "/root/src/libs/guid.d.ts",
                 ]);

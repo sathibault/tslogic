@@ -162,6 +162,7 @@ Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'node', 'require', 'types'.
 Loading module as file / folder, candidate module location '/user/username/projects/myproject/src/fileB.mjs', target file type 'TypeScript'.
 File '/user/username/projects/myproject/src/fileB.mjs.ts' does not exist.
+File '/user/username/projects/myproject/src/fileB.mjs.tslx' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.tsx' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.d.ts' does not exist.
 File name '/user/username/projects/myproject/src/fileB.mjs' has a '.mjs' extension - stripping it.
@@ -382,6 +383,7 @@ Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'node', 'require', 'types'.
 Loading module as file / folder, candidate module location '/user/username/projects/myproject/src/fileB.mjs', target file type 'TypeScript'.
 File '/user/username/projects/myproject/src/fileB.mjs.ts' does not exist.
+File '/user/username/projects/myproject/src/fileB.mjs.tslx' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.tsx' does not exist.
 File '/user/username/projects/myproject/src/fileB.mjs.d.ts' does not exist.
 File name '/user/username/projects/myproject/src/fileB.mjs' has a '.mjs' extension - stripping it.

@@ -5,6 +5,7 @@
     "Resolving module name 'a' relative to base url '/' - '/a'.",
     "Loading module as file / folder, candidate module location '/a', target file type 'TypeScript'.",
     "File '/a.ts' does not exist.",
+    "File '/a.tslx' does not exist.",
     "File '/a.tsx' does not exist.",
     "File '/a.d.ts' does not exist.",
     "Found 'package.json' at '/a/package.json'.",
@@ -18,6 +19,7 @@
     "File '/a/ts3.1/index' does not exist.",
     "Loading module as file / folder, candidate module location '/a/ts3.1/index', target file type 'TypeScript'.",
     "File '/a/ts3.1/index.ts' does not exist.",
+    "File '/a/ts3.1/index.tslx' does not exist.",
     "File '/a/ts3.1/index.tsx' does not exist.",
     "File '/a/ts3.1/index.d.ts' exist - use it as a name resolution result.",
     "======== Module name 'a' was successfully resolved to '/a/ts3.1/index.d.ts'. ========"

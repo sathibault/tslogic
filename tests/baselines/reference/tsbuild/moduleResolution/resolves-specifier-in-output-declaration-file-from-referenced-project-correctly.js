@@ -62,6 +62,7 @@ Directory '/user/username/projects/myproject/packages/node_modules' does not exi
 Found 'package.json' at '/user/username/projects/myproject/node_modules/pkg2/package.json'.
 'package.json' does not have a 'typesVersions' field.
 File '/user/username/projects/myproject/node_modules/pkg2.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2.tslx' does not exist.
 File '/user/username/projects/myproject/node_modules/pkg2.tsx' does not exist.
 File '/user/username/projects/myproject/node_modules/pkg2.d.ts' does not exist.
 'package.json' does not have a 'typings' field.
@@ -71,10 +72,12 @@ File '/user/username/projects/myproject/node_modules/pkg2/build/index.js' exist 
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.js' has an unsupported extension, so skipping it.
 Loading module as file / folder, candidate module location '/user/username/projects/myproject/node_modules/pkg2/build/index.js', target file type 'TypeScript'.
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.js.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2/build/index.js.tslx' does not exist.
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.js.tsx' does not exist.
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.js.d.ts' does not exist.
 File name '/user/username/projects/myproject/node_modules/pkg2/build/index.js' has a '.js' extension - stripping it.
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2/build/index.tslx' does not exist.
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.tsx' does not exist.
 File '/user/username/projects/myproject/node_modules/pkg2/build/index.d.ts' exist - use it as a name resolution result.
 Resolving real path for '/user/username/projects/myproject/node_modules/pkg2/build/index.d.ts', result '/user/username/projects/myproject/packages/pkg2/build/index.d.ts'.

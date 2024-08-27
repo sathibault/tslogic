@@ -863,7 +863,7 @@ namespace ts {
             case ModuleResolutionKind.NodeNext:
                 return fileExtensionIsOneOf(fileName, [Extension.Dmts, Extension.Mts, Extension.Mjs]) ? ModuleKind.ESNext :
                     fileExtensionIsOneOf(fileName, [Extension.Dcts, Extension.Cts, Extension.Cjs]) ? ModuleKind.CommonJS :
-                    fileExtensionIsOneOf(fileName, [Extension.Dts, Extension.Ts, Extension.Tsx, Extension.Js, Extension.Jsx]) ? lookupFromPackageJson() :
+                    fileExtensionIsOneOf(fileName, [Extension.Dts, Extension.Ts, Extension.Tslx, Extension.Tsx, Extension.Js, Extension.Jsx]) ? lookupFromPackageJson() :
                     undefined; // other extensions, like `json` or `tsbuildinfo`, are set as `undefined` here but they should never be fed through the transformer pipeline
             default:
                 return undefined;
@@ -4016,6 +4016,7 @@ namespace ts {
                 // Otherwise just check if sourceFile with the name exists
                 const filePathWithoutExtension = removeFileExtension(filePath);
                 return !!getSourceFileByPath((filePathWithoutExtension + Extension.Ts) as Path) ||
+                    !!getSourceFileByPath((filePathWithoutExtension + Extension.Tslx) as Path) ||
                     !!getSourceFileByPath((filePathWithoutExtension + Extension.Tsx) as Path);
             }
             return false;
@@ -4330,6 +4331,7 @@ namespace ts {
     export function getResolutionDiagnostic(options: CompilerOptions, { extension }: ResolvedModuleFull): DiagnosticMessage | undefined {
         switch (extension) {
             case Extension.Ts:
+            case Extension.Tslx:
             case Extension.Dts:
                 // These are always allowed.
                 return undefined;

@@ -93,12 +93,14 @@ Loading module 'typescript-fsa' from 'node_modules' folder, target file type 'Ty
 Found 'package.json' at '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/package.json'.
 'package.json' does not have a 'typesVersions' field.
 File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa.ts' does not exist.
+File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa.tslx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa.tsx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa.d.ts' does not exist.
 'package.json' does not have a 'typings' field.
 'package.json' does not have a 'types' field.
 'package.json' does not have a 'main' field.
 File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/index.ts' does not exist.
+File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/index.tslx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/index.tsx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/index.d.ts' exist - use it as a name resolution result.
 Resolving real path for '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/index.d.ts', result '/user/username/projects/myproject/plugin-one/node_modules/typescript-fsa/index.d.ts'.
@@ -108,9 +110,11 @@ Module resolution kind is not specified, using 'NodeJs'.
 Loading module 'plugin-two' from 'node_modules' folder, target file type 'TypeScript'.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two/package.json' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two.ts' does not exist.
+File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two.tslx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two.tsx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two.d.ts' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two/index.ts' does not exist.
+File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two/index.tslx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two/index.tsx' does not exist.
 File '/user/username/projects/myproject/plugin-one/node_modules/plugin-two/index.d.ts' exist - use it as a name resolution result.
 Resolving real path for '/user/username/projects/myproject/plugin-one/node_modules/plugin-two/index.d.ts', result '/user/username/projects/myProject/plugin-two/index.d.ts'.
@@ -121,12 +125,14 @@ Loading module 'typescript-fsa' from 'node_modules' folder, target file type 'Ty
 Found 'package.json' at '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/package.json'.
 'package.json' does not have a 'typesVersions' field.
 File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa.ts' does not exist.
+File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa.tslx' does not exist.
 File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa.tsx' does not exist.
 File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa.d.ts' does not exist.
 'package.json' does not have a 'typings' field.
 'package.json' does not have a 'types' field.
 'package.json' does not have a 'main' field.
 File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/index.ts' does not exist.
+File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/index.tslx' does not exist.
 File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/index.tsx' does not exist.
 File '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/index.d.ts' exist - use it as a name resolution result.
 Resolving real path for '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/index.d.ts', result '/user/username/projects/myProject/plugin-two/node_modules/typescript-fsa/index.d.ts'.

@@ -3276,6 +3276,7 @@ declare namespace ts {
     }
     export enum Extension {
         Ts = ".ts",
+        Tslx = ".tslx",
         Tsx = ".tsx",
         Dts = ".d.ts",
         Js = ".js",

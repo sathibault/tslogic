@@ -1624,7 +1624,7 @@ namespace ts {
                         candidate += Extension.Json;
                         return useDts ? tryExtension(Extension.Dts) : undefined;
                     default:
-                        return tryExtension(Extension.Ts) || tryExtension(Extension.Tsx) || (useDts ? tryExtension(Extension.Dts) : undefined);
+                        return tryExtension(Extension.Ts) || tryExtension(Extension.Tslx) || tryExtension(Extension.Tsx) || (useDts ? tryExtension(Extension.Dts) : undefined);
                 }
             case Extensions.JavaScript:
                 switch (originalExtension) {
@@ -1977,9 +1977,9 @@ namespace ts {
             case Extensions.Json:
                 return extension === Extension.Json;
             case Extensions.TypeScript:
-                return extension === Extension.Ts || extension === Extension.Tsx || extension === Extension.Mts || extension === Extension.Cts || extension === Extension.Dts || extension === Extension.Dmts || extension === Extension.Dcts;
+                return extension === Extension.Ts || extension === Extension.Tslx || extension === Extension.Tsx || extension === Extension.Mts || extension === Extension.Cts || extension === Extension.Dts || extension === Extension.Dmts || extension === Extension.Dcts;
             case Extensions.TsOnly:
-                return extension === Extension.Ts || extension === Extension.Tsx || extension === Extension.Mts || extension === Extension.Cts;
+                return extension === Extension.Ts || extension === Extension.Tslx || extension === Extension.Tsx || extension === Extension.Mts || extension === Extension.Cts;
             case Extensions.DtsOnly:
                 return extension === Extension.Dts || extension === Extension.Dmts || extension === Extension.Dcts;
         }
