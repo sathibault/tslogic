@@ -423,8 +423,9 @@ namespace ts {
         [SyntaxKind.VariableDeclarationList]: function forEachChildInVariableDeclarationList<T>(node: VariableDeclarationList, cbNode: (node: Node) => T | undefined, cbNodes?: (nodes: NodeArray<Node>) => T | undefined): T | undefined {
             return visitNodes(cbNode, cbNodes, node.declarations);
         },
-        [SyntaxKind.ExpressionStatement]: function forEachChildInExpressionStatement<T>(node: ExpressionStatement, cbNode: (node: Node) => T | undefined, _cbNodes?: (nodes: NodeArray<Node>) => T | undefined): T | undefined {
-            return visitNode(cbNode, node.expression);
+        [SyntaxKind.ExpressionStatement]: function forEachChildInExpressionStatement<T>(node: ExpressionStatement, cbNode: (node: Node) => T | undefined, cbNodes?: (nodes: NodeArray<Node>) => T | undefined): T | undefined {
+            return visitNodes(cbNode, cbNodes, node.illegalDecorators) ||
+                visitNode(cbNode, node.expression);
         },
         [SyntaxKind.IfStatement]: function forEachChildInIfStatement<T>(node: IfStatement, cbNode: (node: Node) => T | undefined, _cbNodes?: (nodes: NodeArray<Node>) => T | undefined): T | undefined {
             return visitNode(cbNode, node.expression) ||
@@ -1505,7 +1506,7 @@ namespace ts {
         }
 
         export function fixupParentReferences(rootNode: Node) {
-            // normally parent references are set during binding. However, for clients that only need
+          // normally parent references are set during binding. However, for clients that only need
             // a syntax tree, and no semantic features, then the binding process is an unnecessary
             // overhead.  This functions allows us to set all the parents, without all the expense of
             // binding.
@@ -6887,10 +6888,15 @@ namespace ts {
                     if (decorators || modifiers) {
                         // We reached this point because we encountered decorators and/or modifiers and assumed a declaration
                         // would follow. For recovery and error reporting purposes, return an incomplete declaration.
-                        //if (decorators && !modifiers && isStartOfExpressionStatement()) {
-                        //  const statement = parseExpressionOrLabeledStatement();
-                        //  return statement;
-                        //}
+                        if (decorators && !modifiers && isStartOfExpressionStatement()) {
+                          const statement = parseExpressionOrLabeledStatement();
+                          if (statement.kind === SyntaxKind.ExpressionStatement) {
+                            statement.illegalDecorators = decorators;
+                            // update text range to include decorators
+                            return finishNode(statement, pos);
+                          }
+                          return statement;
+                        }
                         const missing = createMissingNode<MissingDeclaration>(SyntaxKind.MissingDeclaration, /*reportAtCurrentPosition*/ true, Diagnostics.Declaration_expected);
                         setTextRangePos(missing, pos);
                         missing.illegalDecorators = decorators;

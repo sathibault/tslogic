@@ -1366,6 +1366,8 @@ namespace ts {
         }
 
         function bindExpressionStatement(node: ExpressionStatement): void {
+            if (node.illegalDecorators)
+              bindEach(node.illegalDecorators);
             bind(node.expression);
             maybeBindExpressionFlowIfCall(node.expression);
         }

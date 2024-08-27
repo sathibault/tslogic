@@ -1479,6 +1479,7 @@ declare namespace ts {
     export interface ExpressionStatement extends Statement {
         readonly kind: SyntaxKind.ExpressionStatement;
         readonly expression: Expression;
+        illegalDecorators?: NodeArray<Decorator> | undefined;
     }
     export interface IfStatement extends Statement {
         readonly kind: SyntaxKind.IfStatement;

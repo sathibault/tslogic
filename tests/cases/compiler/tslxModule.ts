@@ -5,5 +5,5 @@ function foo() {
 
 @module('rtl')
 const bar = function () {
-	foo();
+  @start foo();
 }

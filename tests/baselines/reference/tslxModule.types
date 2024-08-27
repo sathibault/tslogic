@@ -22,9 +22,10 @@ function foo() {
 
 const bar = function () {
 >bar : () => void
->function () {	foo();} : () => void
+>function () {  @start foo();} : () => void
 
-	foo();
+  @start foo();
+>start : error
 >foo() : void
 >foo : () => void
 }

@@ -9,4 +9,5 @@ enum E {
 var E;
 (function (E) {
 })(E || (E = {}));
+@dec
 A;

@@ -6,7 +6,7 @@ function foo() {
 
 @module('rtl')
 const bar = function () {
-	foo();
+  @start foo();
 }
 
 
@@ -17,5 +17,6 @@ function foo() {
 }
 @module('rtl')
 var bar = function () {
+    @start
     foo();
 };

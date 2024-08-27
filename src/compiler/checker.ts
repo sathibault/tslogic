@@ -2115,6 +2115,7 @@ namespace ts {
                         if (location.parent && location.parent.kind === SyntaxKind.Parameter) {
                             location = location.parent;
                         }
+
                         //
                         //   function y() {}
                         //   class C {

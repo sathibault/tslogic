@@ -838,6 +838,7 @@ declare namespace ts {
         readonly modifiers?: NodeArray<Modifier>;
         readonly name?: Identifier;
         readonly body?: FunctionBody;
+        readonly illegalDecorators?: NodeArray<Decorator> | undefined;
     }
     export interface MethodSignature extends SignatureDeclarationBase, TypeElement {
         readonly kind: SyntaxKind.MethodSignature;
@@ -1473,10 +1474,12 @@ declare namespace ts {
         readonly kind: SyntaxKind.VariableStatement;
         readonly modifiers?: NodeArray<Modifier>;
         readonly declarationList: VariableDeclarationList;
+        illegalDecorators?: NodeArray<Decorator> | undefined;
     }
     export interface ExpressionStatement extends Statement {
         readonly kind: SyntaxKind.ExpressionStatement;
         readonly expression: Expression;
+        illegalDecorators?: NodeArray<Decorator> | undefined;
     }
     export interface IfStatement extends Statement {
         readonly kind: SyntaxKind.IfStatement;

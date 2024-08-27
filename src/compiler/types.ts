@@ -3092,6 +3092,9 @@ namespace ts {
     export interface ExpressionStatement extends Statement {
         readonly kind: SyntaxKind.ExpressionStatement;
         readonly expression: Expression;
+
+        // The following properties are used only to report grammar errors
+        illegalDecorators?: NodeArray<Decorator> | undefined; // statements cannot have decorators
     }
 
     /* @internal */

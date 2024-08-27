@@ -2915,6 +2915,7 @@ namespace ts {
         }
 
         function emitExpressionStatement(node: ExpressionStatement) {
+            emitDecorators(node, node.illegalDecorators);
             emitExpression(node.expression, parenthesizer.parenthesizeExpressionOfExpressionStatement);
             // Emit semicolon in non json files
             // or if json file that created synthesized expression(eg.define expression statement when --out and amd code generation)
