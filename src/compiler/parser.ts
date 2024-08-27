@@ -4540,7 +4540,13 @@ namespace ts {
         }
 
         function parseInitializer(): Expression | undefined {
-            return parseOptional(SyntaxKind.EqualsToken) ? parseAssignmentExpressionOrHigher(/*allowReturnTypeInArrowFunction*/ true) : undefined;
+            if (parseOptional(SyntaxKind.EqualsToken)) {
+              if (token() == SyntaxKind.AtToken) {
+                parseErrorAtCurrentToken(Diagnostics.Decorators_are_not_valid_here);
+                parseDecorators();
+              }
+              return parseAssignmentExpressionOrHigher(/*allowReturnTypeInArrowFunction*/ true);
+            }
         }
 
         function parseAssignmentExpressionOrHigher(allowReturnTypeInArrowFunction: boolean): Expression {
@@ -6881,6 +6887,10 @@ namespace ts {
                     if (decorators || modifiers) {
                         // We reached this point because we encountered decorators and/or modifiers and assumed a declaration
                         // would follow. For recovery and error reporting purposes, return an incomplete declaration.
+                        //if (decorators && !modifiers && isStartOfExpressionStatement()) {
+                        //  const statement = parseExpressionOrLabeledStatement();
+                        //  return statement;
+                        //}
                         const missing = createMissingNode<MissingDeclaration>(SyntaxKind.MissingDeclaration, /*reportAtCurrentPosition*/ true, Diagnostics.Declaration_expected);
                         setTextRangePos(missing, pos);
                         missing.illegalDecorators = decorators;

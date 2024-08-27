@@ -882,12 +882,10 @@ namespace ts {
         const kind = node.kind;
         return kind === SyntaxKind.PropertyAssignment
             || kind === SyntaxKind.ShorthandPropertyAssignment
-            || kind === SyntaxKind.FunctionDeclaration
             || kind === SyntaxKind.Constructor
             || kind === SyntaxKind.IndexSignature
             || kind === SyntaxKind.ClassStaticBlockDeclaration
             || kind === SyntaxKind.MissingDeclaration
-            || kind === SyntaxKind.VariableStatement
             || kind === SyntaxKind.InterfaceDeclaration
             || kind === SyntaxKind.TypeAliasDeclaration
             || kind === SyntaxKind.EnumDeclaration

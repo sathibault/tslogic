@@ -1,0 +1,31 @@
+=== tests/cases/compiler/tslxModule.ts ===
+@module('rtl')
+>module('rtl') : error
+>module : error
+>'rtl' : "rtl"
+
+function foo() {
+>foo : () => void
+
+  console.log('hello');
+>console.log('hello') : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>'hello' : "hello"
+}
+
+@module('rtl')
+>module('rtl') : error
+>module : error
+>'rtl' : "rtl"
+
+const bar = function () {
+>bar : () => void
+>function () {	foo();} : () => void
+
+	foo();
+>foo() : void
+>foo : () => void
+}
+

@@ -1808,7 +1808,7 @@ namespace ts {
         readonly body?: FunctionBody;
 
         // The following properties are used only to report grammar errors
-        /* @internal */ readonly illegalDecorators?: NodeArray<Decorator> | undefined; // functions cannot have decorators
+        readonly illegalDecorators?: NodeArray<Decorator> | undefined; // functions cannot have decorators
     }
 
     export interface MethodSignature extends SignatureDeclarationBase, TypeElement {
@@ -3086,7 +3086,7 @@ namespace ts {
         readonly declarationList: VariableDeclarationList;
 
         // The following properties are used only to report grammar errors
-        /* @internal*/ illegalDecorators?: NodeArray<Decorator> | undefined;
+        illegalDecorators?: NodeArray<Decorator> | undefined;
     }
 
     export interface ExpressionStatement extends Statement {

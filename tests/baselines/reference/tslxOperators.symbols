@@ -1,61 +1,61 @@
-=== tests/cases/compiler/operatorOverload.ts ===
+=== tests/cases/compiler/tslxOperators.ts ===
 var N=3;
->N : Symbol(N, Decl(operatorOverload.ts, 0, 3))
+>N : Symbol(N, Decl(tslxOperators.ts, 0, 3))
 
 N.toLocaleString();
 >N.toLocaleString : Symbol(Number.toLocaleString, Decl(lib.es5.d.ts, --, --), Decl(lib.es2020.number.d.ts, --, --))
->N : Symbol(N, Decl(operatorOverload.ts, 0, 3))
+>N : Symbol(N, Decl(tslxOperators.ts, 0, 3))
 >toLocaleString : Symbol(Number.toLocaleString, Decl(lib.es5.d.ts, --, --), Decl(lib.es2020.number.d.ts, --, --))
 
 var a: UInt<8>;
->a : Symbol(a, Decl(operatorOverload.ts, 2, 3))
+>a : Symbol(a, Decl(tslxOperators.ts, 2, 3))
 >UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
 
 a = 1;
->a : Symbol(a, Decl(operatorOverload.ts, 2, 3))
+>a : Symbol(a, Decl(tslxOperators.ts, 2, 3))
 
 a += 2;
->a : Symbol(a, Decl(operatorOverload.ts, 2, 3))
+>a : Symbol(a, Decl(tslxOperators.ts, 2, 3))
 
 var b: uint16 = 300;
->b : Symbol(b, Decl(operatorOverload.ts, 6, 3))
+>b : Symbol(b, Decl(tslxOperators.ts, 6, 3))
 >uint16 : Symbol(uint16, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
 
 const x: UInt<1> = 1;
->x : Symbol(x, Decl(operatorOverload.ts, 8, 5))
+>x : Symbol(x, Decl(tslxOperators.ts, 8, 5))
 >UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
 
 const y: UInt<1> = x + x;
->y : Symbol(y, Decl(operatorOverload.ts, 9, 5))
+>y : Symbol(y, Decl(tslxOperators.ts, 9, 5))
 >UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
->x : Symbol(x, Decl(operatorOverload.ts, 8, 5))
->x : Symbol(x, Decl(operatorOverload.ts, 8, 5))
+>x : Symbol(x, Decl(tslxOperators.ts, 8, 5))
+>x : Symbol(x, Decl(tslxOperators.ts, 8, 5))
 
 const z: UInt<2> = x #+ 1;
->z : Symbol(z, Decl(operatorOverload.ts, 10, 5))
+>z : Symbol(z, Decl(tslxOperators.ts, 10, 5))
 >UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
->x : Symbol(x, Decl(operatorOverload.ts, 8, 5))
+>x : Symbol(x, Decl(tslxOperators.ts, 8, 5))
 
 const FX_SHR: uint8 = 15;
->FX_SHR : Symbol(FX_SHR, Decl(operatorOverload.ts, 12, 5))
+>FX_SHR : Symbol(FX_SHR, Decl(tslxOperators.ts, 12, 5))
 >uint8 : Symbol(uint8, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
 
 function fx_mul(x: int32, y: int32) {
->fx_mul : Symbol(fx_mul, Decl(operatorOverload.ts, 12, 25))
->x : Symbol(x, Decl(operatorOverload.ts, 14, 16))
+>fx_mul : Symbol(fx_mul, Decl(tslxOperators.ts, 12, 25))
+>x : Symbol(x, Decl(tslxOperators.ts, 14, 16))
 >int32 : Symbol(int32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
->y : Symbol(y, Decl(operatorOverload.ts, 14, 25))
+>y : Symbol(y, Decl(tslxOperators.ts, 14, 25))
 >int32 : Symbol(int32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
 
   var prod: int64 = x #* y;
->prod : Symbol(prod, Decl(operatorOverload.ts, 15, 5))
+>prod : Symbol(prod, Decl(tslxOperators.ts, 15, 5))
 >int64 : Symbol(int64, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
->x : Symbol(x, Decl(operatorOverload.ts, 14, 16))
->y : Symbol(y, Decl(operatorOverload.ts, 14, 25))
+>x : Symbol(x, Decl(tslxOperators.ts, 14, 16))
+>y : Symbol(y, Decl(tslxOperators.ts, 14, 25))
 
   return int32(prod >> FX_SHR);
 >int32 : Symbol(int32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
->prod : Symbol(prod, Decl(operatorOverload.ts, 15, 5))
->FX_SHR : Symbol(FX_SHR, Decl(operatorOverload.ts, 12, 5))
+>prod : Symbol(prod, Decl(tslxOperators.ts, 15, 5))
+>FX_SHR : Symbol(FX_SHR, Decl(tslxOperators.ts, 12, 5))
 }
 

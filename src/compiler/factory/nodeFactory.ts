@@ -3327,8 +3327,16 @@ namespace ts {
         function updateVariableStatement(node: VariableStatement, modifiers: readonly Modifier[] | undefined, declarationList: VariableDeclarationList) {
             return node.modifiers !== modifiers
                 || node.declarationList !== declarationList
-                ? update(createVariableStatement(modifiers, declarationList), node)
+                ? finishUpdateVariableDeclaration(createVariableStatement(modifiers, declarationList), node)
                 : node;
+        }
+
+        function finishUpdateVariableDeclaration(updated: Mutable<VariableStatement>, original: VariableStatement) {
+          if (updated !== original) {
+              // copy children used only for error reporting
+              updated.illegalDecorators = original.illegalDecorators;
+          }
+          return update(updated, original);
         }
 
         // @api

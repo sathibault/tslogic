@@ -15,6 +15,7 @@ limit
 //// [a.js]
 var a = !;
 !;
+@$
 var b = !;
 !;
 !;

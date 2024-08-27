@@ -1,4 +1,4 @@
-//// [operatorOverload.ts]
+//// [tslxOperators.ts]
 var N=3;
 N.toLocaleString();
 var a: UInt<8>;
@@ -19,7 +19,7 @@ function fx_mul(x: int32, y: int32) {
 }
 
 
-//// [operatorOverload.js]
+//// [tslxOperators.js]
 var N = 3;
 N.toLocaleString();
 var a;

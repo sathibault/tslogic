@@ -2897,6 +2897,7 @@ namespace ts {
         }
 
         function emitVariableStatement(node: VariableStatement) {
+            emitDecorators(node, node.illegalDecorators);
             emitModifiers(node, node.modifiers);
             emit(node.declarationList);
             writeTrailingSemicolon();
@@ -3174,6 +3175,8 @@ namespace ts {
         }
 
         function emitFunctionDeclaration(node: FunctionDeclaration) {
+            if (node.kind == SyntaxKind.FunctionDeclaration)
+                emitDecorators(node, node.illegalDecorators);
             emitFunctionDeclarationOrExpression(node);
         }
 
