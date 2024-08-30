@@ -17,3 +17,5 @@ function fx_mul(x: int32, y: int32) {
   var prod: int64 = x #* y;
   return int32(prod >> FX_SHR);
 }
+
+fx_mul(3, 5);

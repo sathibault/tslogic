@@ -443,6 +443,7 @@ namespace ts {
             getIndexType: type => getIndexType(type),
             getBaseTypes,
             getBaseTypeOfLiteralType,
+            getImplementsTypes,
             getWidenedType,
             getTypeFromTypeNode: nodeIn => {
                 const node = getParseTreeNode(nodeIn, isTypeNode);
@@ -17838,7 +17839,7 @@ namespace ts {
             containingMessageChain: (() => DiagnosticMessageChain | undefined) | undefined,
             errorOutputContainer: { errors?: Diagnostic[], skipLogging?: boolean } | undefined
         ): boolean {
-            if (expr && isConstNumberExpression(expr) && isBitType(target)) {
+            if (expr && isConstNumberExpression(expr) && (isBitType(target) || isRtlType(target))) {
                 return true;
             } else if (expr && isArrayLiteralExpression(expr)) {
                 if (checkArrayLiteralRelatedToBits(source, target, expr))
@@ -34541,7 +34542,9 @@ namespace ts {
         // This seems necessary to populate resolvedTypeArguments for types like: type uint8 = UInt<8>
         function resolveRef(type: Type) {
           if (getObjectFlags(type) & ObjectFlags.Reference)
-            return (type as TypeReference).node ? createTypeReference((type as TypeReference).target, getTypeArguments(type as TypeReference)) : getSingleBaseForNonAugmentingSubtype(type) || type;
+            type = (type as TypeReference).node ? createTypeReference((type as TypeReference).target, getTypeArguments(type as TypeReference)) : getSingleBaseForNonAugmentingSubtype(type) || type;
+          if (isRtlType(type) && type.resolvedTypeArguments)
+            resolveRef(type.resolvedTypeArguments[0]);
           return type;
         }
 

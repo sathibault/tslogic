@@ -1808,7 +1808,7 @@ namespace ts {
         readonly body?: FunctionBody;
 
         // The following properties are used only to report grammar errors
-        readonly illegalDecorators?: NodeArray<Decorator> | undefined; // functions cannot have decorators
+        illegalDecorators?: NodeArray<Decorator> | undefined; // functions cannot have decorators
     }
 
     export interface MethodSignature extends SignatureDeclarationBase, TypeElement {
@@ -4613,6 +4613,7 @@ namespace ts {
         /* @internal */ getIndexType(type: Type): Type;
         getBaseTypes(type: InterfaceType): BaseType[];
         getBaseTypeOfLiteralType(type: Type): Type;
+        getImplementsTypes(type: InterfaceType): BaseType[];
         getWidenedType(type: Type): Type;
         /* @internal */
         getPromisedTypeOfPromise(promise: Type, errorNode?: Node): Type | undefined;

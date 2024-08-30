@@ -1,0 +1,148 @@
+=== tests/cases/compiler/tslxRtl.ts ===
+interface RtlExpr<T extends Bits> {
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
+>T : Symbol(T, Decl(tslxRtl.ts, 0, 18))
+>Bits : Symbol(Bits, Decl(lib.es2020.d.ts, --, --))
+
+  val?: T;
+>val : Symbol(RtlExpr.val, Decl(tslxRtl.ts, 0, 35))
+>T : Symbol(T, Decl(tslxRtl.ts, 0, 18))
+
+  build(): void;
+>build : Symbol(RtlExpr.build, Decl(tslxRtl.ts, 1, 10))
+}
+
+class Signal<T extends Bits> implements RtlExpr<T> {
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>T : Symbol(T, Decl(tslxRtl.ts, 5, 13))
+>Bits : Symbol(Bits, Decl(lib.es2020.d.ts, --, --))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
+>T : Symbol(T, Decl(tslxRtl.ts, 5, 13))
+
+  build() {
+>build : Symbol(Signal.build, Decl(tslxRtl.ts, 5, 52))
+  }
+}
+
+class Driver<T> {
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>T : Symbol(T, Decl(tslxRtl.ts, 10, 13))
+
+  is<U>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>U : Symbol(U, Decl(tslxRtl.ts, 11, 5))
+>val : Symbol(val, Decl(tslxRtl.ts, 11, 8))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
+>T : Symbol(T, Decl(tslxRtl.ts, 10, 13))
+>cond : Symbol(cond, Decl(tslxRtl.ts, 11, 24))
+>x : Symbol(x, Decl(tslxRtl.ts, 11, 33))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
+>U : Symbol(U, Decl(tslxRtl.ts, 11, 5))
+  }
+}
+
+var x = new Signal<Int<8>>();
+>x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
+
+var y = new Signal<Int<8>>();
+>y : Symbol(y, Decl(tslxRtl.ts, 16, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
+
+var z = x + y;
+>z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
+>x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
+>y : Symbol(y, Decl(tslxRtl.ts, 16, 3))
+
+z += z;
+>z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
+>z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
+
+var b = z == 5;
+>b : Symbol(b, Decl(tslxRtl.ts, 19, 3))
+>z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
+
+var dr = new Driver<bit>();
+>dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+
+dr.is(1, when => x==5);
+>dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>when : Symbol(when, Decl(tslxRtl.ts, 22, 8))
+>x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
+
+type bit = UInt<1>;
+>bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+>UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
+
+function signal<T>(init?: T) {
+>signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
+>init : Symbol(init, Decl(tslxRtl.ts, 25, 19))
+>T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
+
+  return new Signal<T>();
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
+}
+
+function Heartbeat() {
+>Heartbeat : Symbol(Heartbeat, Decl(tslxRtl.ts, 27, 1))
+
+  var counter = signal<uint32>(0);
+>counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>uint32 : Symbol(uint32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+
+  var valid = signal<bit>(0);
+>valid : Symbol(valid, Decl(tslxRtl.ts, 31, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+
+  var accept = signal<bit>();
+>accept : Symbol(accept, Decl(tslxRtl.ts, 32, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+
+  var zero = signal<bit>();
+>zero : Symbol(zero, Decl(tslxRtl.ts, 33, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+
+  var d = new Driver<UInt<32>>();
+>d : Symbol(d, Decl(tslxRtl.ts, 35, 5))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
+
+  d.is(counter + 1);
+>d.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>d : Symbol(d, Decl(tslxRtl.ts, 35, 5))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
+
+  var v = new Driver<bit>();
+>v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+
+  v.is(1, when => counter == 1e6);
+>v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>when : Symbol(when, Decl(tslxRtl.ts, 39, 9))
+>counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
+
+  v.is(0, when => valid & accept);
+>v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>when : Symbol(when, Decl(tslxRtl.ts, 40, 9))
+>valid : Symbol(valid, Decl(tslxRtl.ts, 31, 5))
+>accept : Symbol(accept, Decl(tslxRtl.ts, 32, 5))
+}
+

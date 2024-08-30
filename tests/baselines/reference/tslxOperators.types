@@ -65,3 +65,9 @@ function fx_mul(x: int32, y: int32) {
 >FX_SHR : uint8
 }
 
+fx_mul(3, 5);
+>fx_mul(3, 5) : Int<32>
+>fx_mul : (x: int32, y: int32) => Int<32>
+>3 : 3
+>5 : 5
+

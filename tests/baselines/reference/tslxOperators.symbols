@@ -59,3 +59,6 @@ function fx_mul(x: int32, y: int32) {
 >FX_SHR : Symbol(FX_SHR, Decl(tslxOperators.ts, 12, 5))
 }
 
+fx_mul(3, 5);
+>fx_mul : Symbol(fx_mul, Decl(tslxOperators.ts, 12, 25))
+

@@ -18,6 +18,8 @@ function fx_mul(x: int32, y: int32) {
   return int32(prod >> FX_SHR);
 }
 
+fx_mul(3, 5);
+
 
 //// [tslxOperators.js]
 var N = 3;
@@ -34,3 +36,4 @@ function fx_mul(x, y) {
     var prod = x #* y;
     return int32(prod >> FX_SHR);
 }
+fx_mul(3, 5);

@@ -1,0 +1,153 @@
+=== tests/cases/compiler/tslxRtl.ts ===
+interface RtlExpr<T extends Bits> {
+  val?: T;
+>val : T
+
+  build(): void;
+>build : () => void
+}
+
+class Signal<T extends Bits> implements RtlExpr<T> {
+>Signal : Signal<T>
+
+  build() {
+>build : () => void
+  }
+}
+
+class Driver<T> {
+>Driver : Driver<T>
+
+  is<U>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
+>is : <U>(val: RtlExpr<T>, cond?: (x: any) => RtlExpr<U>) => void
+>val : RtlExpr<T>
+>cond : (x: any) => RtlExpr<U>
+>x : any
+  }
+}
+
+var x = new Signal<Int<8>>();
+>x : Signal<Int<8>>
+>new Signal<Int<8>>() : Signal<Int<8>>
+>Signal : typeof Signal
+
+var y = new Signal<Int<8>>();
+>y : Signal<Int<8>>
+>new Signal<Int<8>>() : Signal<Int<8>>
+>Signal : typeof Signal
+
+var z = x + y;
+>z : RtlExpr<Int<8>>
+>x + y : RtlExpr<Int<8>>
+>x : Signal<Int<8>>
+>y : Signal<Int<8>>
+
+z += z;
+>z += z : RtlExpr<Int<8>>
+>z : RtlExpr<Int<8>>
+>z : RtlExpr<Int<8>>
+
+var b = z == 5;
+>b : RtlExpr<boolean>
+>z == 5 : RtlExpr<boolean>
+>z : RtlExpr<Int<8>>
+>5 : 5
+
+var dr = new Driver<bit>();
+>dr : Driver<bit>
+>new Driver<bit>() : Driver<bit>
+>Driver : typeof Driver
+
+dr.is(1, when => x==5);
+>dr.is(1, when => x==5) : void
+>dr.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>dr : Driver<bit>
+>is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>1 : 1
+>when => x==5 : (when: any) => RtlExpr<boolean>
+>when : any
+>x==5 : RtlExpr<boolean>
+>x : Signal<Int<8>>
+>5 : 5
+
+type bit = UInt<1>;
+>bit : UInt<1>
+
+function signal<T>(init?: T) {
+>signal : <T>(init?: T) => Signal<T>
+>init : T
+
+  return new Signal<T>();
+>new Signal<T>() : Signal<T>
+>Signal : typeof Signal
+}
+
+function Heartbeat() {
+>Heartbeat : () => void
+
+  var counter = signal<uint32>(0);
+>counter : Signal<uint32>
+>signal<uint32>(0) : Signal<uint32>
+>signal : <T>(init?: T) => Signal<T>
+>0 : 0
+
+  var valid = signal<bit>(0);
+>valid : Signal<bit>
+>signal<bit>(0) : Signal<bit>
+>signal : <T>(init?: T) => Signal<T>
+>0 : 0
+
+  var accept = signal<bit>();
+>accept : Signal<bit>
+>signal<bit>() : Signal<bit>
+>signal : <T>(init?: T) => Signal<T>
+
+  var zero = signal<bit>();
+>zero : Signal<bit>
+>signal<bit>() : Signal<bit>
+>signal : <T>(init?: T) => Signal<T>
+
+  var d = new Driver<UInt<32>>();
+>d : Driver<UInt<32>>
+>new Driver<UInt<32>>() : Driver<UInt<32>>
+>Driver : typeof Driver
+
+  d.is(counter + 1);
+>d.is(counter + 1) : void
+>d.is : <U>(val: RtlExpr<UInt<32>>, cond?: (x: any) => RtlExpr<U>) => void
+>d : Driver<UInt<32>>
+>is : <U>(val: RtlExpr<UInt<32>>, cond?: (x: any) => RtlExpr<U>) => void
+>counter + 1 : RtlExpr<uint32>
+>counter : Signal<uint32>
+>1 : 1
+
+  var v = new Driver<bit>();
+>v : Driver<bit>
+>new Driver<bit>() : Driver<bit>
+>Driver : typeof Driver
+
+  v.is(1, when => counter == 1e6);
+>v.is(1, when => counter == 1e6) : void
+>v.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>v : Driver<bit>
+>is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>1 : 1
+>when => counter == 1e6 : (when: any) => RtlExpr<boolean>
+>when : any
+>counter == 1e6 : RtlExpr<boolean>
+>counter : Signal<uint32>
+>1e6 : 1000000
+
+  v.is(0, when => valid & accept);
+>v.is(0, when => valid & accept) : void
+>v.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>v : Driver<bit>
+>is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>0 : 0
+>when => valid & accept : (when: any) => RtlExpr<UInt<1>>
+>when : any
+>valid & accept : RtlExpr<UInt<1>>
+>valid : Signal<bit>
+>accept : Signal<bit>
+}
+
