@@ -838,7 +838,7 @@ declare namespace ts {
         readonly modifiers?: NodeArray<Modifier>;
         readonly name?: Identifier;
         readonly body?: FunctionBody;
-        readonly illegalDecorators?: NodeArray<Decorator> | undefined;
+        illegalDecorators?: NodeArray<Decorator> | undefined;
     }
     export interface MethodSignature extends SignatureDeclarationBase, TypeElement {
         readonly kind: SyntaxKind.MethodSignature;
@@ -2340,6 +2340,7 @@ declare namespace ts {
         getIndexTypeOfType(type: Type, kind: IndexKind): Type | undefined;
         getBaseTypes(type: InterfaceType): BaseType[];
         getBaseTypeOfLiteralType(type: Type): Type;
+        getImplementsTypes(type: InterfaceType): BaseType[];
         getWidenedType(type: Type): Type;
         getReturnTypeOfSignature(signature: Signature): Type;
         getNullableType(type: Type, flags: TypeFlags): Type;
@@ -5069,9 +5070,11 @@ declare namespace ts {
     function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, leftType: Type, right: Expression, rightType: Type): Type | undefined;
     function checkInitializerOverload(target: Type, initType: Type, initializer: Expression): boolean;
     function assignableToBitType(source: Type, target: TypeReference): boolean;
+    function assignableToRtlType(source: Type, target: TypeReference): boolean;
     function isConstNumberExpression(expr: Expression): boolean;
     function isBitType(t: Type): t is TypeReference;
     function isNumberType(type: Type): number;
+    function isRtlType(t: Type): t is TypeReference;
 }
 declare namespace ts {
     /**
