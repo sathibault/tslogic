@@ -67,7 +67,7 @@ var b = z == 5;
 var dr = new Driver<bit>();
 >dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
 >Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
->bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+>bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
 dr.is(1, when => x==5);
 >dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
@@ -76,12 +76,14 @@ dr.is(1, when => x==5);
 >when : Symbol(when, Decl(tslxRtl.ts, 22, 8))
 >x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
 
-type bit = UInt<1>;
->bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
->UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
+dr.is(x == 1);
+>dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
 
 function signal<T>(init?: T) {
->signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
 >T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
 >init : Symbol(init, Decl(tslxRtl.ts, 25, 19))
 >T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
@@ -96,23 +98,23 @@ function Heartbeat() {
 
   var counter = signal<uint32>(0);
 >counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
 >uint32 : Symbol(uint32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
 
   var valid = signal<bit>(0);
 >valid : Symbol(valid, Decl(tslxRtl.ts, 31, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
->bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   var accept = signal<bit>();
 >accept : Symbol(accept, Decl(tslxRtl.ts, 32, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
->bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   var zero = signal<bit>();
 >zero : Symbol(zero, Decl(tslxRtl.ts, 33, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 24, 19))
->bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   var d = new Driver<UInt<32>>();
 >d : Symbol(d, Decl(tslxRtl.ts, 35, 5))
@@ -128,7 +130,7 @@ function Heartbeat() {
   var v = new Driver<bit>();
 >v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
 >Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
->bit : Symbol(bit, Decl(tslxRtl.ts, 22, 23))
+>bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   v.is(1, when => counter == 1e6);
 >v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
@@ -145,4 +147,25 @@ function Heartbeat() {
 >valid : Symbol(valid, Decl(tslxRtl.ts, 31, 5))
 >accept : Symbol(accept, Decl(tslxRtl.ts, 32, 5))
 }
+
+var i32 = new Signal<Int<32>>();
+>i32 : Symbol(i32, Decl(tslxRtl.ts, 43, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
+
+i32 = 1;
+>i32 : Symbol(i32, Decl(tslxRtl.ts, 43, 3))
+
+var xd = new Driver<Int<8>>();
+>xd : Symbol(xd, Decl(tslxRtl.ts, 45, 3))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
+
+xd.is(int8(i32));
+>xd.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>xd : Symbol(xd, Decl(tslxRtl.ts, 45, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+>int8 : Symbol(int8, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
+>i32 : Symbol(i32, Decl(tslxRtl.ts, 43, 3))
+
 

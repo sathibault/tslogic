@@ -23,8 +23,8 @@ var b = z == 5;
 
 var dr = new Driver<bit>();
 dr.is(1, when => x==5);
+dr.is(x == 1);
 
-type bit = UInt<1>;
 function signal<T>(init?: T) {
   return new Signal<T>();
 }
@@ -42,3 +42,9 @@ function Heartbeat() {
   v.is(1, when => counter == 1e6);
   v.is(0, when => valid & accept);
 }
+
+var i32 = new Signal<Int<32>>();
+i32 = 1;
+var xd = new Driver<Int<8>>();
+xd.is(int8(i32));
+

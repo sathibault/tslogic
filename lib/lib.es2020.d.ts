@@ -38,6 +38,7 @@ interface Int<W extends number> extends Bits {
   signed: true;
   data: W;
 }
+type bit = UInt<1>;
 type uint8 = UInt<8>;
 type uint16 = UInt<16>;
 type uint32 = UInt<32>;

@@ -212,6 +212,10 @@ export function assignableToBitType(source: Type, target: TypeReference): boolea
       const w1 = (target.resolvedTypeArguments[0] as LiteralType).value as number;
       const w2 = (source.resolvedTypeArguments[0] as LiteralType).value as number;
       return s1 == s2 && w1 == w2;
+    } else if (source.flags & TypeFlags.BooleanLike) {
+      const w = (target.resolvedTypeArguments[0] as LiteralType).value as number;
+      console.log('bool to bits', target.checker.typeToString(target), source.checker.typeToString(source), !isSignedBitType(target), w );
+      return !isSignedBitType(target) && w == 1;
     } else if (source.flags & TypeFlags.Union) {
       const subs = (source as UnionType).types;
       return subs.every(subType => assignableToBitType(subType, target));
@@ -224,13 +228,19 @@ export function assignableToRtlType(source: Type, target: TypeReference): boolea
   if (source.flags & TypeFlags.NumberLiteral)
     return true;
   else if (target.resolvedTypeArguments) {
+    const tgtArg = target.resolvedTypeArguments[0];
     if (isRtlType(source) && source.resolvedTypeArguments) {
       const srcArg = source.resolvedTypeArguments[0];
-      const tgtArg = target.resolvedTypeArguments[0];
       if (isBitType(srcArg) && srcArg.resolvedTypeArguments) {
         if (isBitType(tgtArg) && tgtArg.resolvedTypeArguments)
           return assignableToBitType(srcArg, tgtArg);
+      } else if (srcArg.flags & TypeFlags.BooleanLike) {
+        if (isBitType(tgtArg) && tgtArg.resolvedTypeArguments)
+          return assignableToBitType(srcArg, tgtArg);
       }
+    } else if (isBitType(source) && source.resolvedTypeArguments) {
+      if (isBitType(tgtArg) && tgtArg.resolvedTypeArguments)
+        return assignableToBitType(source, tgtArg);
     } else if (source.flags & TypeFlags.Union) {
       const subs = (source as UnionType).types;
       return subs.every(subType => assignableToRtlType(subType, target));

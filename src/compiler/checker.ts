@@ -18699,8 +18699,14 @@ namespace ts {
             if (relation === assignableRelation ||
                 relation === subtypeRelation ||
                 relation === comparableRelation) {
-                  if (isBitType(source) && isNumberType(target))
-                    return true;
+                // Allow bit types to be passed into TypeScript libraries expecting numbers
+                if (isBitType(source) && isNumberType(target))
+                  return true;
+                // Defer bit/rtl checking types to assignableToBitType/assignableToRtlType
+                if (isBitType(target) && assignableToBitType(resolveRef(source), resolveRef(target) as TypeReference))
+                  return true;
+                if (isRtlType(target) && assignableToRtlType(resolveRef(source), resolveRef(target) as TypeReference))
+                  return true;
             }
             if (relation !== identityRelation) {
                 if (relation === comparableRelation && !(target.flags & TypeFlags.Never) && isSimpleTypeRelatedTo(target, source, relation) || isSimpleTypeRelatedTo(source, target, relation)) {
@@ -19003,7 +19009,9 @@ namespace ts {
 
                 if (isLiteralType(source) && !typeCouldHaveTopLevelSingletonTypes(target)) {
                     generalizedSource = getBaseTypeOfLiteralType(source);
-                    Debug.assert(!isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable");
+                    // allow this for bit/rtl types
+                    if (!isBitType(target) && !isRtlType(target))
+                      Debug.assert(!isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable");
                     generalizedSourceType = getTypeNameForErrorDisplay(generalizedSource);
                 }
 
@@ -31371,7 +31379,7 @@ namespace ts {
                             }
                         }
                         else {
-                            Debug.fail("No error for last overload signature");
+                            Debug.fail("No error for last overload signature: " + (isExpression(node) && exprToString(node)));
                         }
                     }
                     else {
@@ -31492,6 +31500,7 @@ namespace ts {
                             typeArgumentTypes = checkTypeArguments(candidate, typeArguments, /*reportErrors*/ false);
                             if (!typeArgumentTypes) {
                                 candidateForTypeArgumentError = candidate;
+                                //console.log('ERROR 1', candidateIndex);
                                 continue;
                             }
                         }
@@ -31505,6 +31514,7 @@ namespace ts {
                         // signature with different arity and we need to perform another arity check.
                         if (getNonArrayRestType(candidate) && !hasCorrectArity(node, args, checkCandidate, signatureHelpTrailingComma)) {
                             candidateForArgumentArityError = checkCandidate;
+                            //console.log('ERROR 2', candidateIndex);
                             continue;
                         }
                     }
@@ -31514,6 +31524,7 @@ namespace ts {
                     if (getSignatureApplicabilityError(node, args, checkCandidate, relation, argCheckMode, /*reportErrors*/ false, /*containingMessageChain*/ undefined)) {
                         // Give preference to error candidates that have no rest parameters (as they are more specific)
                         (candidatesForArgumentError || (candidatesForArgumentError = [])).push(checkCandidate);
+                        //console.log('ERROR 3', candidateIndex);
                         continue;
                     }
                     if (argCheckMode) {
@@ -31528,12 +31539,14 @@ namespace ts {
                             // signature with different arity and we need to perform another arity check.
                             if (getNonArrayRestType(candidate) && !hasCorrectArity(node, args, checkCandidate, signatureHelpTrailingComma)) {
                                 candidateForArgumentArityError = checkCandidate;
+                                //console.log('ERROR 4', candidateIndex);
                                 continue;
                             }
                         }
                         if (getSignatureApplicabilityError(node, args, checkCandidate, relation, argCheckMode, /*reportErrors*/ false, /*containingMessageChain*/ undefined)) {
                             // Give preference to error candidates that have no rest parameters (as they are more specific)
                             (candidatesForArgumentError || (candidatesForArgumentError = [])).push(checkCandidate);
+                            //console.log('ERROR 5', candidateIndex);
                             continue;
                         }
                     }
