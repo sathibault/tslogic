@@ -33,6 +33,21 @@ class Driver<T extends RtlScalar> {
   }
 }
 
+const w = 4;
+>w : 4
+>4 : 4
+
+var r = new Signal<Int<w>>();
+>r : Signal<Int<4>>
+>new Signal<Int<w>>() : Signal<Int<4>>
+>Signal : typeof Signal
+
+var s = r #* r;
+>s : RtlExpr<Int<8>>
+>r #* r : RtlExpr<Int<8>>
+>r : Signal<Int<4>>
+>r : Signal<Int<4>>
+
 var x = new Signal<Int<8>>();
 >x : Signal<Int<8>>
 >new Signal<Int<8>>() : Signal<Int<8>>

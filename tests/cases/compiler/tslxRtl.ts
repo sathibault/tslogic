@@ -18,6 +18,10 @@ class Driver<T extends RtlScalar> {
   }
 }
 
+const w = 4;
+var r = new Signal<Int<w>>();
+var s = r #* r;
+
 var x = new Signal<Int<8>>();
 var y = new Signal<Int<8>>();
 var z = x + y;

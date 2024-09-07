@@ -4951,7 +4951,16 @@ namespace ts {
             }
             return result;
         }
-
+/*
+        function nodeToString(node: Node, writer: EmitTextWriter = createTextWriter("")): string {
+          const options = { removeComments: true };
+          const printer = createPrinter(options);
+          const sourceFile = getSourceFileOfNode(node);
+          printer.writeNode(EmitHint.Unspecified, node, sourceFile, writer);
+          const result = writer.getText();
+          return result;
+        }
+*/
         function exprToString(expr: Expression, writer: EmitTextWriter = createTextWriter("")): string {
           const options = { removeComments: true };
           const printer = createPrinter(options);
@@ -13979,10 +13988,35 @@ namespace ts {
             return unknownSymbol;
         }
 
+        function isStaticVarConst(decl: Declaration | undefined):decl is VariableDeclaration {
+          if (decl && isVariableDeclaration(decl) && isVarConst(decl)) {
+            if (decl.initializer && decl.initializer.kind == SyntaxKind.NumericLiteral)
+              return true;
+          }
+          return false;
+        }
+
+        function getStaticVarConst(decl: VariableDeclaration): number {
+          if (decl.initializer) {
+            const expr = decl.initializer;
+            if (isNumericLiteral(expr))
+              return +expr.text;
+          }
+          Debug.assert(false);
+        }
+
         function resolveTypeReferenceName(typeReference: TypeReferenceType, meaning: SymbolFlags, ignoreErrors?: boolean) {
             const name = getTypeReferenceName(typeReference);
             if (!name) {
                 return unknownSymbol;
+            }
+            if (meaning & SymbolFlags.Type) {
+              var sym = resolveEntityName(name, meaning, true);
+              if (!sym || sym === undefinedSymbol) {
+                sym = resolveEntityName(name, SymbolFlags.Variable, true);
+                if (sym && sym !== unknownSymbol && isStaticVarConst(sym.valueDeclaration))
+                  return sym;
+              }
             }
             const symbol = resolveEntityName(name, meaning, ignoreErrors);
             return symbol && symbol !== unknownSymbol ? symbol :
@@ -13992,6 +14026,10 @@ namespace ts {
         function getTypeReferenceType(node: NodeWithTypeArguments, symbol: Symbol): Type {
             if (symbol === unknownSymbol) {
                 return errorType;
+            }
+            if  ((symbol.flags & SymbolFlags.Variable) && isStaticVarConst(symbol.valueDeclaration)) {
+              const n = getStaticVarConst(symbol.valueDeclaration);
+              return getNumberLiteralType(n);
             }
             symbol = getExpandoSymbol(symbol) || symbol;
             if (symbol.flags & (SymbolFlags.Class | SymbolFlags.Interface)) {
