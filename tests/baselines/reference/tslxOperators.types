@@ -59,7 +59,7 @@ function fx_mul(x: int32, y: int32) {
 
   return int32(prod >> FX_SHR);
 >int32(prod >> FX_SHR) : Int<32>
->int32 : (x: Bits | RtlBits) => Int<32>
+>int32 : (x: number | Bits | RtlBits) => Int<32>
 >prod >> FX_SHR : Int<64>
 >prod : int64
 >FX_SHR : uint8

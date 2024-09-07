@@ -185,7 +185,7 @@ xd.is(int8(i32 & 255));
 >xd : Driver<Int<8>>
 >is : <U extends RtlScalar>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
 >int8(i32 & 255) : Int<8>
->int8 : (x: Bits | RtlBits) => Int<8>
+>int8 : (x: number | Bits | RtlBits) => Int<8>
 >i32 & 255 : RtlExpr<Int<32>>
 >i32 : Signal<Int<32>>
 >255 : 255
