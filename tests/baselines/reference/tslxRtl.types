@@ -1,5 +1,8 @@
 === tests/cases/compiler/tslxRtl.ts ===
-interface RtlExpr<T extends Bits> {
+type RtlScalar = Bits | boolean;
+>RtlScalar : boolean | Bits
+
+interface RtlExpr<T extends RtlScalar> extends RtlBits {
   val?: T;
 >val : T
 
@@ -7,19 +10,23 @@ interface RtlExpr<T extends Bits> {
 >build : () => void
 }
 
-class Signal<T extends Bits> implements RtlExpr<T> {
+class Signal<T extends RtlScalar> implements RtlExpr<T> {
 >Signal : Signal<T>
+
+  _rtl: true;
+>_rtl : true
+>true : true
 
   build() {
 >build : () => void
   }
 }
 
-class Driver<T> {
+class Driver<T extends RtlScalar> {
 >Driver : Driver<T>
 
-  is<U>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
->is : <U>(val: RtlExpr<T>, cond?: (x: any) => RtlExpr<U>) => void
+  is<U extends RtlScalar>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
+>is : <U extends RtlScalar>(val: RtlExpr<T>, cond?: (x: any) => RtlExpr<U>) => void
 >val : RtlExpr<T>
 >cond : (x: any) => RtlExpr<U>
 >x : any
@@ -60,9 +67,9 @@ var dr = new Driver<bit>();
 
 dr.is(1, when => x==5);
 >dr.is(1, when => x==5) : void
->dr.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>dr.is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >dr : Driver<bit>
->is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >1 : 1
 >when => x==5 : (when: any) => RtlExpr<boolean>
 >when : any
@@ -72,15 +79,15 @@ dr.is(1, when => x==5);
 
 dr.is(x == 1);
 >dr.is(x == 1) : void
->dr.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>dr.is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >dr : Driver<bit>
->is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >x == 1 : RtlExpr<boolean>
 >x : Signal<Int<8>>
 >1 : 1
 
-function signal<T>(init?: T) {
->signal : <T>(init?: T) => Signal<T>
+function signal<T extends RtlScalar>(init?: T) {
+>signal : <T extends RtlScalar>(init?: T) => Signal<T>
 >init : T
 
   return new Signal<T>();
@@ -94,24 +101,24 @@ function Heartbeat() {
   var counter = signal<uint32>(0);
 >counter : Signal<uint32>
 >signal<uint32>(0) : Signal<uint32>
->signal : <T>(init?: T) => Signal<T>
+>signal : <T extends RtlScalar>(init?: T) => Signal<T>
 >0 : 0
 
   var valid = signal<bit>(0);
 >valid : Signal<bit>
 >signal<bit>(0) : Signal<bit>
->signal : <T>(init?: T) => Signal<T>
+>signal : <T extends RtlScalar>(init?: T) => Signal<T>
 >0 : 0
 
   var accept = signal<bit>();
 >accept : Signal<bit>
 >signal<bit>() : Signal<bit>
->signal : <T>(init?: T) => Signal<T>
+>signal : <T extends RtlScalar>(init?: T) => Signal<T>
 
   var zero = signal<bit>();
 >zero : Signal<bit>
 >signal<bit>() : Signal<bit>
->signal : <T>(init?: T) => Signal<T>
+>signal : <T extends RtlScalar>(init?: T) => Signal<T>
 
   var d = new Driver<UInt<32>>();
 >d : Driver<UInt<32>>
@@ -120,9 +127,9 @@ function Heartbeat() {
 
   d.is(counter + 1);
 >d.is(counter + 1) : void
->d.is : <U>(val: RtlExpr<UInt<32>>, cond?: (x: any) => RtlExpr<U>) => void
+>d.is : <U extends RtlScalar>(val: RtlExpr<UInt<32>>, cond?: (x: any) => RtlExpr<U>) => void
 >d : Driver<UInt<32>>
->is : <U>(val: RtlExpr<UInt<32>>, cond?: (x: any) => RtlExpr<U>) => void
+>is : <U extends RtlScalar>(val: RtlExpr<UInt<32>>, cond?: (x: any) => RtlExpr<U>) => void
 >counter + 1 : RtlExpr<uint32>
 >counter : Signal<uint32>
 >1 : 1
@@ -134,9 +141,9 @@ function Heartbeat() {
 
   v.is(1, when => counter == 1e6);
 >v.is(1, when => counter == 1e6) : void
->v.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>v.is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >v : Driver<bit>
->is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >1 : 1
 >when => counter == 1e6 : (when: any) => RtlExpr<boolean>
 >when : any
@@ -146,9 +153,9 @@ function Heartbeat() {
 
   v.is(0, when => valid & accept);
 >v.is(0, when => valid & accept) : void
->v.is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>v.is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >v : Driver<bit>
->is : <U>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
+>is : <U extends RtlScalar>(val: RtlExpr<bit>, cond?: (x: any) => RtlExpr<U>) => void
 >0 : 0
 >when => valid & accept : (when: any) => RtlExpr<UInt<1>>
 >when : any
@@ -172,13 +179,15 @@ var xd = new Driver<Int<8>>();
 >new Driver<Int<8>>() : Driver<Int<8>>
 >Driver : typeof Driver
 
-xd.is(int8(i32));
->xd.is(int8(i32)) : void
->xd.is : <U>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
+xd.is(int8(i32 & 255));
+>xd.is(int8(i32 & 255)) : void
+>xd.is : <U extends RtlScalar>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
 >xd : Driver<Int<8>>
->is : <U>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
->int8(i32) : Int<8>
->int8 : (x: Bits) => Int<8>
+>is : <U extends RtlScalar>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
+>int8(i32 & 255) : Int<8>
+>int8 : (x: Bits | RtlBits) => Int<8>
+>i32 & 255 : RtlExpr<Int<32>>
 >i32 : Signal<Int<32>>
+>255 : 255
 
 

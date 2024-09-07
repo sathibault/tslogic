@@ -1,16 +1,19 @@
 //// [tslxRtl.ts]
-interface RtlExpr<T extends Bits> {
+type RtlScalar = Bits | boolean;
+
+interface RtlExpr<T extends RtlScalar> extends RtlBits {
   val?: T;
   build(): void;
 }
 
-class Signal<T extends Bits> implements RtlExpr<T> {
+class Signal<T extends RtlScalar> implements RtlExpr<T> {
+  _rtl: true;
   build() {
   }
 }
 
-class Driver<T> {
-  is<U>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
+class Driver<T extends RtlScalar> {
+  is<U extends RtlScalar>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
   }
 }
 
@@ -24,7 +27,7 @@ var dr = new Driver<bit>();
 dr.is(1, when => x==5);
 dr.is(x == 1);
 
-function signal<T>(init?: T) {
+function signal<T extends RtlScalar>(init?: T) {
   return new Signal<T>();
 }
 
@@ -45,7 +48,7 @@ function Heartbeat() {
 var i32 = new Signal<Int<32>>();
 i32 = 1;
 var xd = new Driver<Int<8>>();
-xd.is(int8(i32));
+xd.is(int8(i32 & 255));
 
 
 
@@ -83,4 +86,4 @@ function Heartbeat() {
 var i32 = new Signal();
 i32 = 1;
 var xd = new Driver();
-xd.is(int8(i32));
+xd.is(int8(i32 & 255));

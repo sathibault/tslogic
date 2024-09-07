@@ -1,171 +1,182 @@
 === tests/cases/compiler/tslxRtl.ts ===
-interface RtlExpr<T extends Bits> {
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
->T : Symbol(T, Decl(tslxRtl.ts, 0, 18))
+type RtlScalar = Bits | boolean;
+>RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
 >Bits : Symbol(Bits, Decl(lib.es2020.d.ts, --, --))
+
+interface RtlExpr<T extends RtlScalar> extends RtlBits {
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>T : Symbol(T, Decl(tslxRtl.ts, 2, 18))
+>RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
+>RtlBits : Symbol(RtlBits, Decl(lib.es2020.d.ts, --, --))
 
   val?: T;
->val : Symbol(RtlExpr.val, Decl(tslxRtl.ts, 0, 35))
->T : Symbol(T, Decl(tslxRtl.ts, 0, 18))
+>val : Symbol(RtlExpr.val, Decl(tslxRtl.ts, 2, 56))
+>T : Symbol(T, Decl(tslxRtl.ts, 2, 18))
 
   build(): void;
->build : Symbol(RtlExpr.build, Decl(tslxRtl.ts, 1, 10))
+>build : Symbol(RtlExpr.build, Decl(tslxRtl.ts, 3, 10))
 }
 
-class Signal<T extends Bits> implements RtlExpr<T> {
->Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
->T : Symbol(T, Decl(tslxRtl.ts, 5, 13))
->Bits : Symbol(Bits, Decl(lib.es2020.d.ts, --, --))
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
->T : Symbol(T, Decl(tslxRtl.ts, 5, 13))
+class Signal<T extends RtlScalar> implements RtlExpr<T> {
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
+>T : Symbol(T, Decl(tslxRtl.ts, 7, 13))
+>RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>T : Symbol(T, Decl(tslxRtl.ts, 7, 13))
+
+  _rtl: true;
+>_rtl : Symbol(Signal._rtl, Decl(tslxRtl.ts, 7, 57))
 
   build() {
->build : Symbol(Signal.build, Decl(tslxRtl.ts, 5, 52))
+>build : Symbol(Signal.build, Decl(tslxRtl.ts, 8, 13))
   }
 }
 
-class Driver<T> {
->Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
->T : Symbol(T, Decl(tslxRtl.ts, 10, 13))
+class Driver<T extends RtlScalar> {
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 11, 1))
+>T : Symbol(T, Decl(tslxRtl.ts, 13, 13))
+>RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
 
-  is<U>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->U : Symbol(U, Decl(tslxRtl.ts, 11, 5))
->val : Symbol(val, Decl(tslxRtl.ts, 11, 8))
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
->T : Symbol(T, Decl(tslxRtl.ts, 10, 13))
->cond : Symbol(cond, Decl(tslxRtl.ts, 11, 24))
->x : Symbol(x, Decl(tslxRtl.ts, 11, 33))
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 0))
->U : Symbol(U, Decl(tslxRtl.ts, 11, 5))
+  is<U extends RtlScalar>(val: RtlExpr<T>, cond?: (x:any) => RtlExpr<U>) {
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>U : Symbol(U, Decl(tslxRtl.ts, 14, 5))
+>RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
+>val : Symbol(val, Decl(tslxRtl.ts, 14, 26))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>T : Symbol(T, Decl(tslxRtl.ts, 13, 13))
+>cond : Symbol(cond, Decl(tslxRtl.ts, 14, 42))
+>x : Symbol(x, Decl(tslxRtl.ts, 14, 51))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>U : Symbol(U, Decl(tslxRtl.ts, 14, 5))
   }
 }
 
 var x = new Signal<Int<8>>();
->x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
->Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>x : Symbol(x, Decl(tslxRtl.ts, 18, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
 >Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
 
 var y = new Signal<Int<8>>();
->y : Symbol(y, Decl(tslxRtl.ts, 16, 3))
->Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>y : Symbol(y, Decl(tslxRtl.ts, 19, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
 >Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
 
 var z = x + y;
->z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
->x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
->y : Symbol(y, Decl(tslxRtl.ts, 16, 3))
+>z : Symbol(z, Decl(tslxRtl.ts, 20, 3))
+>x : Symbol(x, Decl(tslxRtl.ts, 18, 3))
+>y : Symbol(y, Decl(tslxRtl.ts, 19, 3))
 
 z += z;
->z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
->z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
+>z : Symbol(z, Decl(tslxRtl.ts, 20, 3))
+>z : Symbol(z, Decl(tslxRtl.ts, 20, 3))
 
 var b = z == 5;
->b : Symbol(b, Decl(tslxRtl.ts, 19, 3))
->z : Symbol(z, Decl(tslxRtl.ts, 17, 3))
+>b : Symbol(b, Decl(tslxRtl.ts, 22, 3))
+>z : Symbol(z, Decl(tslxRtl.ts, 20, 3))
 
 var dr = new Driver<bit>();
->dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
->Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>dr : Symbol(dr, Decl(tslxRtl.ts, 24, 3))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 11, 1))
 >bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
 dr.is(1, when => x==5);
->dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->when : Symbol(when, Decl(tslxRtl.ts, 22, 8))
->x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
+>dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>dr : Symbol(dr, Decl(tslxRtl.ts, 24, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>when : Symbol(when, Decl(tslxRtl.ts, 25, 8))
+>x : Symbol(x, Decl(tslxRtl.ts, 18, 3))
 
 dr.is(x == 1);
->dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->dr : Symbol(dr, Decl(tslxRtl.ts, 21, 3))
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->x : Symbol(x, Decl(tslxRtl.ts, 15, 3))
+>dr.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>dr : Symbol(dr, Decl(tslxRtl.ts, 24, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>x : Symbol(x, Decl(tslxRtl.ts, 18, 3))
 
-function signal<T>(init?: T) {
->signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
->T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
->init : Symbol(init, Decl(tslxRtl.ts, 25, 19))
->T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
+function signal<T extends RtlScalar>(init?: T) {
+>signal : Symbol(signal, Decl(tslxRtl.ts, 26, 14))
+>T : Symbol(T, Decl(tslxRtl.ts, 28, 16))
+>RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
+>init : Symbol(init, Decl(tslxRtl.ts, 28, 37))
+>T : Symbol(T, Decl(tslxRtl.ts, 28, 16))
 
   return new Signal<T>();
->Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
->T : Symbol(T, Decl(tslxRtl.ts, 25, 16))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
+>T : Symbol(T, Decl(tslxRtl.ts, 28, 16))
 }
 
 function Heartbeat() {
->Heartbeat : Symbol(Heartbeat, Decl(tslxRtl.ts, 27, 1))
+>Heartbeat : Symbol(Heartbeat, Decl(tslxRtl.ts, 30, 1))
 
   var counter = signal<uint32>(0);
->counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>counter : Symbol(counter, Decl(tslxRtl.ts, 33, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 26, 14))
 >uint32 : Symbol(uint32, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
 
   var valid = signal<bit>(0);
->valid : Symbol(valid, Decl(tslxRtl.ts, 31, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>valid : Symbol(valid, Decl(tslxRtl.ts, 34, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 26, 14))
 >bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   var accept = signal<bit>();
->accept : Symbol(accept, Decl(tslxRtl.ts, 32, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>accept : Symbol(accept, Decl(tslxRtl.ts, 35, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 26, 14))
 >bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   var zero = signal<bit>();
->zero : Symbol(zero, Decl(tslxRtl.ts, 33, 5))
->signal : Symbol(signal, Decl(tslxRtl.ts, 23, 14))
+>zero : Symbol(zero, Decl(tslxRtl.ts, 36, 5))
+>signal : Symbol(signal, Decl(tslxRtl.ts, 26, 14))
 >bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   var d = new Driver<UInt<32>>();
->d : Symbol(d, Decl(tslxRtl.ts, 35, 5))
->Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>d : Symbol(d, Decl(tslxRtl.ts, 38, 5))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 11, 1))
 >UInt : Symbol(UInt, Decl(lib.es2020.d.ts, --, --))
 
   d.is(counter + 1);
->d.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->d : Symbol(d, Decl(tslxRtl.ts, 35, 5))
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
+>d.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>d : Symbol(d, Decl(tslxRtl.ts, 38, 5))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>counter : Symbol(counter, Decl(tslxRtl.ts, 33, 5))
 
   var v = new Driver<bit>();
->v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
->Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>v : Symbol(v, Decl(tslxRtl.ts, 41, 5))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 11, 1))
 >bit : Symbol(bit, Decl(lib.es2020.d.ts, --, --))
 
   v.is(1, when => counter == 1e6);
->v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->when : Symbol(when, Decl(tslxRtl.ts, 39, 9))
->counter : Symbol(counter, Decl(tslxRtl.ts, 30, 5))
+>v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>v : Symbol(v, Decl(tslxRtl.ts, 41, 5))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>when : Symbol(when, Decl(tslxRtl.ts, 42, 9))
+>counter : Symbol(counter, Decl(tslxRtl.ts, 33, 5))
 
   v.is(0, when => valid & accept);
->v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->v : Symbol(v, Decl(tslxRtl.ts, 38, 5))
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->when : Symbol(when, Decl(tslxRtl.ts, 40, 9))
->valid : Symbol(valid, Decl(tslxRtl.ts, 31, 5))
->accept : Symbol(accept, Decl(tslxRtl.ts, 32, 5))
+>v.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>v : Symbol(v, Decl(tslxRtl.ts, 41, 5))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>when : Symbol(when, Decl(tslxRtl.ts, 43, 9))
+>valid : Symbol(valid, Decl(tslxRtl.ts, 34, 5))
+>accept : Symbol(accept, Decl(tslxRtl.ts, 35, 5))
 }
 
 var i32 = new Signal<Int<32>>();
->i32 : Symbol(i32, Decl(tslxRtl.ts, 43, 3))
->Signal : Symbol(Signal, Decl(tslxRtl.ts, 3, 1))
+>i32 : Symbol(i32, Decl(tslxRtl.ts, 46, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
 >Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
 
 i32 = 1;
->i32 : Symbol(i32, Decl(tslxRtl.ts, 43, 3))
+>i32 : Symbol(i32, Decl(tslxRtl.ts, 46, 3))
 
 var xd = new Driver<Int<8>>();
->xd : Symbol(xd, Decl(tslxRtl.ts, 45, 3))
->Driver : Symbol(Driver, Decl(tslxRtl.ts, 8, 1))
+>xd : Symbol(xd, Decl(tslxRtl.ts, 48, 3))
+>Driver : Symbol(Driver, Decl(tslxRtl.ts, 11, 1))
 >Int : Symbol(Int, Decl(lib.es2020.d.ts, --, --))
 
-xd.is(int8(i32));
->xd.is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
->xd : Symbol(xd, Decl(tslxRtl.ts, 45, 3))
->is : Symbol(Driver.is, Decl(tslxRtl.ts, 10, 17))
+xd.is(int8(i32 & 255));
+>xd.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>xd : Symbol(xd, Decl(tslxRtl.ts, 48, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
 >int8 : Symbol(int8, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
->i32 : Symbol(i32, Decl(tslxRtl.ts, 43, 3))
+>i32 : Symbol(i32, Decl(tslxRtl.ts, 46, 3))
 
 
