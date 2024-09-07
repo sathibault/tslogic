@@ -130,6 +130,45 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
         const arg = leftType.checker.getNumberLiteralType(rw);
         return rightType.checker.createTypeReference(rightType.target, [arg]);
       }
+
+      if (isRtlType(leftType) && leftType.resolvedTypeArguments &&
+          isRtlType(rightType) && rightType.resolvedTypeArguments) {
+            const arg1 = leftType.resolvedTypeArguments[0];
+            const arg2 = rightType.resolvedTypeArguments[0];
+            console.log('got 2 rtl');
+            if (isBitType(arg1) && arg1.resolvedTypeArguments &&
+                isBitType(arg2) && arg2.resolvedTypeArguments) {
+              console.log('got 2 bit');
+              const s1 = isSignedBitType(arg1);
+              const s2 = isSignedBitType(arg2);
+              const w1 = (arg1.resolvedTypeArguments[0] as LiteralType).value as number;
+              const w2 = (arg2.resolvedTypeArguments[0] as LiteralType).value as number;
+
+              const ext = w1 != w2 ? 0 : s1 == s2 ? 1 : 2;
+              const hw = ext + ((w1 >= w2) ? w1 : w2);
+              const hwArg = leftType.checker.getNumberLiteralType(hw);
+              const hRes = isSignedBitType(arg1) ? arg1.checker.createTypeReference(arg1.target, [hwArg]) : arg2.checker.createTypeReference(arg2.target, [hwArg]);
+              return makeRtlBase(leftType, hRes);
+            }
+      } else if (isRtlType(leftType) && leftType.resolvedTypeArguments && isConstNumberExpression(right)) {
+        const arg1 = leftType.resolvedTypeArguments[0];
+        if (isBitType(arg1) && arg1.resolvedTypeArguments) {
+          const w1 = (arg1.resolvedTypeArguments[0] as LiteralType).value as number;
+          const rw = 1 + w1;
+          const arg = leftType.checker.getNumberLiteralType(rw);
+          return makeRtlBase(leftType, arg1.checker.createTypeReference(arg1.target, [arg]));
+        }
+      } else if (isRtlType(rightType) && rightType.resolvedTypeArguments && isConstNumberExpression(left)) {
+        const arg2 = rightType.resolvedTypeArguments[0];
+        if (isBitType(arg2) && arg2.resolvedTypeArguments) {
+          const w2 = (arg2.resolvedTypeArguments[0] as LiteralType).value as number;
+          const rw = 1 + w2;
+          const arg = rightType.checker.getNumberLiteralType(rw);
+          return makeRtlBase(rightType, arg2.checker.createTypeReference(arg2.target, [arg]));
+        }
+      }
+
+      console.log('hash +/- fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType), exprToString(right));
       break;
     case SyntaxKind.HashAsteriskToken:
       if (isBitType(leftType) && leftType.resolvedTypeArguments &&
@@ -143,6 +182,25 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
           else
             return rightType.checker.createTypeReference(rightType.target, [arg]);
       }
+
+      if (isRtlType(leftType) && leftType.resolvedTypeArguments &&
+          isRtlType(rightType) && rightType.resolvedTypeArguments) {
+            const arg1 = leftType.resolvedTypeArguments[0];
+            const arg2 = rightType.resolvedTypeArguments[0];
+            console.log('got 2 rtl');
+            if (isBitType(arg1) && arg1.resolvedTypeArguments &&
+                isBitType(arg2) && arg2.resolvedTypeArguments) {
+              console.log('got 2 bit');
+              const w1 = (arg1.resolvedTypeArguments[0] as LiteralType).value as number;
+              const w2 = (arg2.resolvedTypeArguments[0] as LiteralType).value as number;
+              const rw = w1 + w2;
+              const hwArg = arg1.checker.getNumberLiteralType(rw);
+              const hRes = isSignedBitType(arg1) ? arg1.checker.createTypeReference(arg1.target, [hwArg]) : arg2.checker.createTypeReference(arg2.target, [hwArg]);
+              return makeRtlBase(leftType, hRes);
+            }
+      }
+
+      console.log('hash * fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType), exprToString(right));
       break;
 
     case SyntaxKind.EqualsToken:
