@@ -1,6 +1,6 @@
 === tests/cases/compiler/tslxRtl.ts ===
-type RtlScalar = Bits | boolean;
->RtlScalar : boolean | Bits
+type RtlScalar = Bits | string | boolean;
+>RtlScalar : string | boolean | Bits
 
 interface RtlExpr<T extends RtlScalar> extends RtlBits {
   val?: T;
@@ -204,5 +204,27 @@ xd.is(int8(i32 & 255));
 >i32 & 255 : RtlExpr<Int<32>>
 >i32 : Signal<Int<32>>
 >255 : 255
+
+type States = 'init' | 'run';
+>States : "init" | "run"
+
+var ss = new Signal<States>();
+>ss : Signal<States>
+>new Signal<States>() : Signal<States>
+>Signal : typeof Signal
+
+xd.is(0, when => ss == 'run' && x);
+>xd.is(0, when => ss == 'run' && x) : void
+>xd.is : <U extends RtlScalar>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
+>xd : Driver<Int<8>>
+>is : <U extends RtlScalar>(val: RtlExpr<Int<8>>, cond?: (x: any) => RtlExpr<U>) => void
+>0 : 0
+>when => ss == 'run' && x : (when: any) => RtlExpr<boolean>
+>when : any
+>ss == 'run' && x : RtlExpr<boolean>
+>ss == 'run' : RtlExpr<boolean>
+>ss : Signal<States>
+>'run' : "run"
+>x : Signal<Int<8>>
 
 

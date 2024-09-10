@@ -5,13 +5,18 @@ export function checkUnaryOpOverload(operator: SyntaxKind, _expr: Expression, ex
     case SyntaxKind.PlusToken:
     case SyntaxKind.MinusToken:
     case SyntaxKind.TildeToken:
-    case SyntaxKind.ExclamationToken:
     case SyntaxKind.PlusPlusToken:
     case SyntaxKind.MinusMinusToken:
       if (isBitType(exprType) && exprType.resolvedTypeArguments)
         return exprType;
       else if (isRtlType(exprType) && exprType.resolvedTypeArguments)
         return exprType;
+      break;
+    case SyntaxKind.ExclamationToken:
+      if (isBitType(exprType) && exprType.resolvedTypeArguments)
+        return makeRtlBase(exprType, exprType.checker.getBooleanType());
+      else if (isRtlType(exprType) && exprType.resolvedTypeArguments)
+        return makeRtlBase(exprType, exprType.checker.getBooleanType());
       break;
   }
 }
@@ -33,16 +38,34 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
       if (isBitType(leftType) && leftType.resolvedTypeArguments && isConstNumberExpression(right)) {
         return leftType.checker.getBooleanType();
       } else if (isBitType(rightType) && rightType.resolvedTypeArguments && isConstNumberExpression(left)) {
-        return leftType.checker.getBooleanType();
+        return rightType.checker.getBooleanType();
       }
       if (isRtlType(leftType) && leftType.resolvedTypeArguments &&
           isRtlType(rightType) && rightType.resolvedTypeArguments) {
         return makeRtlBase(leftType, leftType.checker.getBooleanType());
-      } else if (isRtlType(leftType) && leftType.resolvedTypeArguments && isConstNumberExpression(right)) {
-        return makeRtlBase(leftType, leftType.checker.getBooleanType());
-      } else if (isRtlType(rightType) && rightType.resolvedTypeArguments && isConstNumberExpression(left)) {
-        return makeRtlBase(rightType, rightType.checker.getBooleanType());
+      } else if (isRtlType(leftType) && leftType.resolvedTypeArguments) {
+        if (isConstNumberExpression(right))
+          return makeRtlBase(leftType, leftType.checker.getBooleanType());
+        else if (isEqualLike(operator) && isStringGroup(leftType.resolvedTypeArguments[0]) && isStringGroup(rightType))
+          return makeRtlBase(leftType, leftType.checker.getBooleanType());
+      } else if (isRtlType(rightType) && rightType.resolvedTypeArguments) {
+        if (isConstNumberExpression(left))
+          return makeRtlBase(rightType, rightType.checker.getBooleanType());
+        else if (isEqualLike(operator) && isStringGroup(leftType) && isStringGroup(rightType.resolvedTypeArguments[0]))
+          return makeRtlBase(rightType, rightType.checker.getBooleanType());
+        console.log('comparison fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType));
       }
+      break;
+    case SyntaxKind.AmpersandAmpersandToken:
+    case SyntaxKind.BarBarToken:
+      if (isBitType(leftType) && leftType.resolvedTypeArguments)
+        return leftType.checker.getBooleanType();
+      else if (isBitType(rightType) && rightType.resolvedTypeArguments)
+        return rightType.checker.getBooleanType();
+      if (isRtlType(leftType) && leftType.resolvedTypeArguments)
+        return makeRtlBase(leftType, leftType.checker.getBooleanType());
+      else if (isRtlType(rightType) && rightType.resolvedTypeArguments)
+        return makeRtlBase(rightType, rightType.checker.getBooleanType());
       break;
     case SyntaxKind.LessThanLessThanToken:
     case SyntaxKind.GreaterThanGreaterThanToken:
@@ -135,10 +158,8 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
           isRtlType(rightType) && rightType.resolvedTypeArguments) {
             const arg1 = leftType.resolvedTypeArguments[0];
             const arg2 = rightType.resolvedTypeArguments[0];
-            console.log('got 2 rtl');
             if (isBitType(arg1) && arg1.resolvedTypeArguments &&
                 isBitType(arg2) && arg2.resolvedTypeArguments) {
-              console.log('got 2 bit');
               const s1 = isSignedBitType(arg1);
               const s2 = isSignedBitType(arg2);
               const w1 = (arg1.resolvedTypeArguments[0] as LiteralType).value as number;
@@ -168,7 +189,7 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
         }
       }
 
-      console.log('hash +/- fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType), exprToString(right));
+      //console.log('hash +/- fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType), exprToString(right));
       break;
     case SyntaxKind.HashAsteriskToken:
       if (isBitType(leftType) && leftType.resolvedTypeArguments &&
@@ -187,10 +208,8 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
           isRtlType(rightType) && rightType.resolvedTypeArguments) {
             const arg1 = leftType.resolvedTypeArguments[0];
             const arg2 = rightType.resolvedTypeArguments[0];
-            console.log('got 2 rtl');
             if (isBitType(arg1) && arg1.resolvedTypeArguments &&
                 isBitType(arg2) && arg2.resolvedTypeArguments) {
-              console.log('got 2 bit');
               const w1 = (arg1.resolvedTypeArguments[0] as LiteralType).value as number;
               const w2 = (arg2.resolvedTypeArguments[0] as LiteralType).value as number;
               const rw = w1 + w2;
@@ -200,7 +219,7 @@ export function checkBinaryOpOverload(operator: SyntaxKind, left: Expression, le
             }
       }
 
-      console.log('hash * fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType), exprToString(right));
+      //console.log('hash * fail', leftType.checker.typeToString(leftType), rightType.checker.typeToString(rightType), exprToString(right));
       break;
 
     case SyntaxKind.EqualsToken:
@@ -382,6 +401,26 @@ function rtlBaseType(t: Type) {
 
 function getTargetType(type: Type): Type {
   return getObjectFlags(type) & ObjectFlags.Reference ? (type as TypeReference).target : type;
+}
+
+function isEqualLike(operator: SyntaxKind) {
+  switch (operator) {
+    case SyntaxKind.EqualsEqualsToken:
+    case SyntaxKind.ExclamationEqualsToken:
+    case SyntaxKind.EqualsEqualsEqualsToken:
+    case SyntaxKind.ExclamationEqualsEqualsToken:
+      return true;
+  }
+  return false;
+}
+
+// type is one or more string literals
+function isStringGroup(type: Type) {
+  if (type.flags & TypeFlags.StringLiteral)
+    return true;
+  else if (type.flags & TypeFlags.Union)
+    return (type as UnionType).types.every(t => (t.flags & TypeFlags.StringLiteral) != 0);
+  return false;
 }
 
 function exprToString(expr: Expression, writer: EmitTextWriter = createTextWriter("")): string {

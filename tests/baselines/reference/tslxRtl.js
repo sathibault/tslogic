@@ -1,5 +1,5 @@
 //// [tslxRtl.ts]
-type RtlScalar = Bits | boolean;
+type RtlScalar = Bits | string | boolean;
 
 interface RtlExpr<T extends RtlScalar> extends RtlBits {
   val?: T;
@@ -54,6 +54,11 @@ i32 = 1;
 var xd = new Driver<Int<8>>();
 xd.is(int8(i32 & 255));
 
+type States = 'init' | 'run';
+
+var ss = new Signal<States>();
+xd.is(0, when => ss == 'run' && x);
+
 
 
 //// [tslxRtl.js]
@@ -94,3 +99,5 @@ var i32 = new Signal();
 i32 = 1;
 var xd = new Driver();
 xd.is(int8(i32 & 255));
+var ss = new Signal();
+xd.is(0, when => ss == 'run' && x);

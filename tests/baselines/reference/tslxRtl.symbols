@@ -1,10 +1,10 @@
 === tests/cases/compiler/tslxRtl.ts ===
-type RtlScalar = Bits | boolean;
+type RtlScalar = Bits | string | boolean;
 >RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
 >Bits : Symbol(Bits, Decl(lib.es2020.d.ts, --, --))
 
 interface RtlExpr<T extends RtlScalar> extends RtlBits {
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 41))
 >T : Symbol(T, Decl(tslxRtl.ts, 2, 18))
 >RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
 >RtlBits : Symbol(RtlBits, Decl(lib.es2020.d.ts, --, --))
@@ -21,7 +21,7 @@ class Signal<T extends RtlScalar> implements RtlExpr<T> {
 >Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
 >T : Symbol(T, Decl(tslxRtl.ts, 7, 13))
 >RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 41))
 >T : Symbol(T, Decl(tslxRtl.ts, 7, 13))
 
   _rtl: true;
@@ -42,11 +42,11 @@ class Driver<T extends RtlScalar> {
 >U : Symbol(U, Decl(tslxRtl.ts, 14, 5))
 >RtlScalar : Symbol(RtlScalar, Decl(tslxRtl.ts, 0, 0))
 >val : Symbol(val, Decl(tslxRtl.ts, 14, 26))
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 41))
 >T : Symbol(T, Decl(tslxRtl.ts, 13, 13))
 >cond : Symbol(cond, Decl(tslxRtl.ts, 14, 42))
 >x : Symbol(x, Decl(tslxRtl.ts, 14, 51))
->RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 32))
+>RtlExpr : Symbol(RtlExpr, Decl(tslxRtl.ts, 0, 41))
 >U : Symbol(U, Decl(tslxRtl.ts, 14, 5))
   }
 }
@@ -192,5 +192,21 @@ xd.is(int8(i32 & 255));
 >is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
 >int8 : Symbol(int8, Decl(lib.es2020.d.ts, --, --), Decl(lib.es2020.d.ts, --, --))
 >i32 : Symbol(i32, Decl(tslxRtl.ts, 50, 3))
+
+type States = 'init' | 'run';
+>States : Symbol(States, Decl(tslxRtl.ts, 53, 23))
+
+var ss = new Signal<States>();
+>ss : Symbol(ss, Decl(tslxRtl.ts, 57, 3))
+>Signal : Symbol(Signal, Decl(tslxRtl.ts, 5, 1))
+>States : Symbol(States, Decl(tslxRtl.ts, 53, 23))
+
+xd.is(0, when => ss == 'run' && x);
+>xd.is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>xd : Symbol(xd, Decl(tslxRtl.ts, 52, 3))
+>is : Symbol(Driver.is, Decl(tslxRtl.ts, 13, 35))
+>when : Symbol(when, Decl(tslxRtl.ts, 58, 8))
+>ss : Symbol(ss, Decl(tslxRtl.ts, 57, 3))
+>x : Symbol(x, Decl(tslxRtl.ts, 22, 3))
 
 
